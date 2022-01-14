@@ -1,5 +1,4 @@
 from typing import Dict
-
 from PIL import Image
 from pathlib import Path
 import zlib
@@ -7,36 +6,8 @@ import numpy
 from pikepdf import Pdf, PdfImage, Name
 import cv2
 import zipfile
-from docx import Document
-from docx.shared import Inches, Cm, Pt
-from docxtpl import DocxTemplate
 import io
-# import tempfile
-# import os
 import fire
-
-
-def update_zip(in_zip: Path, out_zip: Path, filename: str, new_file: io.BytesIO):
-    # generate a temp file
-    # tmpfd, tmpname = tempfile.mkstemp(dir=os.path.dirname(in_zip))
-    # os.close(tmpfd)
-
-    # create a temp copy of the archive without filename
-    with zipfile.ZipFile(in_zip, 'r') as zin:
-        with zipfile.ZipFile(out_zip, 'w') as zout:
-            zout.comment = zin.comment  # preserve the comment
-            for item in zin.infolist():
-                if item.filename != filename:
-                    # zout.writestr(item, zin.read(item.filename))
-                    with zout.open(item.filename, 'w') as f:
-                        f.write(zin.read(item.filename))
-    # replace with the temp archive
-    # os.remove(zipname)
-    # os.rename(tmpname, zipname)
-    # now add filename with its new data
-    with zipfile.ZipFile(out_zip, mode='a', compression=zipfile.ZIP_DEFLATED) as zf:
-        with zf.open(filename, 'w') as f:
-            f.write(new_file.getvalue())
 
 
 def replace_images_in_zip(in_zip: Path, out_zip: Path, replacements: Dict[str, io.BytesIO]) -> Path:
@@ -48,23 +19,17 @@ def replace_images_in_zip(in_zip: Path, out_zip: Path, replacements: Dict[str, i
     :return:
     """
 
-    # create a copy of the archive without the images to replace
     with zipfile.ZipFile(in_zip, 'r') as zin:
         with zipfile.ZipFile(out_zip, 'w') as zout:
             zout.comment = zin.comment  # preserve the comment
             for item in zin.infolist():
                 # copy all files except the images to replace
                 if item.filename not in replacements.keys():
-                    # zout.writestr(item, zin.read(item.filename))
                     with zout.open(item.filename, 'w') as f:
                         f.write(zin.read(item.filename))
                 else:  # replace the image
                     with zout.open(item.filename, 'w') as f:
                         f.write(replacements[item.filename].getvalue())
-    # with zipfile.ZipFile(out_zip, mode='a', compression=zipfile.ZIP_DEFLATED) as zf:
-    #     for filename, new_file in replacements.items():
-    #         with zf.open(filename, 'w') as f:
-    #             f.write(new_file.getvalue())
     return out_zip
 
 
@@ -129,15 +94,9 @@ def remove_watermark_from_docx(input_file: Path, output_file: Path) -> str:
     :return:
     """
     z = zipfile.ZipFile(input_file)
-    # print list of valid attributes for ZipFile object
-    # print(dir(z))
-    # print all files in zip archive
     all_files = z.namelist()
-    # print(all_files)
     # get all files in word/media/ directory
     images = list(filter(lambda x: x.startswith('word/media/'), all_files))
-    print(images)
-    image = images[0]
     replacements = {}
     for image in images:
         with z.open(image) as f:
@@ -151,64 +110,6 @@ def remove_watermark_from_docx(input_file: Path, output_file: Path) -> str:
             replacements[image] = image_file_tmp
     z.close()
     return str(replace_images_in_zip(input_file, output_file, replacements))
-
-    # print(input_file.absolute())
-    doc_tmpl = DocxTemplate(input_file.absolute())
-    doc_tmpl.render({})
-    # print(doc_tmpl.get_docx())
-    # print(doc_tmpl.get_xml())
-    print(doc_tmpl.get_pic_map())
-    for image in images:
-        # placeholder_image = Path(image).stem + Path(image).suffix
-        # print('placeholder_image', placeholder_image)
-        with z.open(image) as f:
-            pil_image = Image.open(f)
-            # noinspection PyTypeChecker
-            opencv_image = cv2.cvtColor(numpy.array(pil_image), cv2.COLOR_RGB2BGR)
-            opencv_image = remove_watermark_from_image(opencv_image)
-            pil_image = Image.fromarray(cv2.cvtColor(opencv_image, cv2.COLOR_BGR2RGB))
-            image_file_tmp = io.BytesIO()
-            pil_image.save(image_file_tmp, format="PNG")
-            print('image_file_tmp', image_file_tmp)
-            # doc_tmpl.replace_media(image, image_file_tmp)
-            doc_tmpl.replace_pic(image, image_file_tmp)
-    doc_tmpl.save(output_file)
-    z.close()
-    return str(output_file)
-    # tpl.replace_pic('dummy_header_pic.jpg','header_pic_i_want.jpg')
-    # removing margins
-    document = Document()
-    margin = Cm(0.0)
-    for section in document.sections:
-        section.top_margin = margin
-        section.bottom_margin = margin
-        section.left_margin = margin
-        section.right_margin = margin
-    # document.add_page_break()
-    nb_images = len(images)
-    # open an image and save it
-    for i, image in enumerate(images):
-        with z.open(image) as f:
-            pil_image = Image.open(f)
-            # noinspection PyTypeChecker
-            opencv_image = cv2.cvtColor(numpy.array(pil_image), cv2.COLOR_RGB2BGR)
-            opencv_image = remove_watermark_from_image(opencv_image)
-            pil_image = Image.fromarray(cv2.cvtColor(opencv_image, cv2.COLOR_BGR2RGB))
-            # add image to document with full page width and height
-            # document.add_picture(img, width=Cm(21.0), height=Cm(29.7))
-            image_file_tmp = io.BytesIO()
-            # pil_image.save(image_file_tmp, format=pil_image.format) # .format lost because of conversion with cv2
-            pil_image.save(image_file_tmp, format="PNG")
-            # document.add_picture(image_file_tmp, width=Pt(pil_image.size[0]), height=Pt(pil_image.size[1]))
-            # document.add_picture(image_file_tmp, width=Cm(21.0), height=Cm(29.7))
-            # document.add_picture(image_file_tmp, height=Cm(29.7))
-            # document.add_picture(image_file_tmp, width=Cm(21.0))
-            document.add_picture(image_file_tmp, width=Inches(8.5), height=Inches(11.0))
-            if i < nb_images - 1:
-                document.add_page_break()
-    z.close()
-    document.save(output_file)
-    return str(output_file)
 
 
 def main(input_file: str, output_file: str = None) -> str:
