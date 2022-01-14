@@ -7,6 +7,7 @@ import cv2
 import zipfile
 from docx import Document
 from docx.shared import Inches, Cm, Pt
+from docxtpl import DocxTemplate
 import io
 import fire
 
@@ -80,9 +81,33 @@ def remove_watermark_from_docx(input_file: Path, output_file: Path) -> str:
     # print(all_files)
     # get all files in word/media/ directory
     images = list(filter(lambda x: x.startswith('word/media/'), all_files))
-    # print(images)
-    document = Document()
+    print(images)
+    # print(input_file.absolute())
+    doc_tmpl = DocxTemplate(input_file.absolute())
+    coc_tmpl = doc_tmpl.render({})
+    # print(doc_tmpl.get_docx())
+    # print(doc_tmpl.get_xml())
+    # print(doc_tmpl.get_pic_map())
+    for image in images:
+        # placeholder_image = Path(image).stem + Path(image).suffix
+        # print('placeholder_image', placeholder_image)
+        with z.open(image) as f:
+            pil_image = Image.open(f)
+            # noinspection PyTypeChecker
+            opencv_image = cv2.cvtColor(numpy.array(pil_image), cv2.COLOR_RGB2BGR)
+            opencv_image = remove_watermark_from_image(opencv_image)
+            pil_image = Image.fromarray(cv2.cvtColor(opencv_image, cv2.COLOR_BGR2RGB))
+            image_file_tmp = io.BytesIO()
+            pil_image.save(image_file_tmp, format="PNG")
+            print('image_file_tmp', image_file_tmp)
+            # doc_tmpl.replace_media(image, image_file_tmp)
+            doc_tmpl.replace_pic(image, image_file_tmp)
+    doc_tmpl.save(output_file)
+    z.close()
+    return str(output_file)
+    # tpl.replace_pic('dummy_header_pic.jpg','header_pic_i_want.jpg')
     # removing margins
+    document = Document()
     margin = Cm(0.0)
     for section in document.sections:
         section.top_margin = margin
