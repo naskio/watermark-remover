@@ -1,4 +1,4 @@
-from typing import Dict
+from typing import Dict, List
 from PIL import Image
 from pathlib import Path
 import zlib
@@ -114,6 +114,22 @@ def remove_watermark_from_docx(input_file: Path, output_file: Path) -> str:
     return str(replace_images_in_zip(input_file, output_file, replacements))
 
 
+def remove_watermark_from_pil_image(input_file: Path, output_file: Path) -> str:
+    """
+    Remove watermark from image
+    :param input_file:
+    :param output_file:
+    :return:
+    """
+    pil_image = Image.open(input_file)
+    # noinspection PyTypeChecker
+    opencv_image = cv2.cvtColor(numpy.array(pil_image), cv2.COLOR_RGB2BGR)
+    opencv_image = remove_watermark_from_image(opencv_image)
+    pil_image = Image.fromarray(cv2.cvtColor(opencv_image, cv2.COLOR_BGR2RGB))
+    pil_image.save(output_file)
+    return str(output_file)
+
+
 def main(input_file: str, output_file: str = None) -> str:
     """
     Entry point
@@ -137,8 +153,28 @@ def main(input_file: str, output_file: str = None) -> str:
         return remove_watermark_from_pdf(input_path, output_path)
     elif str(input_path.suffix).lower() == ".docx":
         return remove_watermark_from_docx(input_path, output_path)
+    elif str(input_path.suffix).lower() in [".png", ".jpg", ".jpeg"]:
+        return remove_watermark_from_pil_image(input_path, output_path)
     else:
         raise Exception(f"Unsupported file type: {input_path.suffix}")
+
+
+def mmain(input_files: List[str], output_dir: str = None) -> List[str]:
+    """
+    Entry point
+    :param input_files:
+    :param output_dir:
+    :return:
+    """
+    output_files = []
+    for input_file in input_files:
+        input_path = Path(input_file)
+        if not output_dir:
+            output_dir = input_path.parent
+        output_file = output_dir / (input_path.stem + f"_generated{input_path.suffix}")
+        output_file = main(input_file, output_file)
+        output_files.append(output_file)
+    return output_files
 
 
 if __name__ == "__main__":

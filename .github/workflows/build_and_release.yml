@@ -82,6 +82,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
+          body_path: ${{ github.workspace }}-CHANGELOG.md
           files: |
             linux-x86_64-${{ steps.get_version.outputs.VERSION }}/*
             windows-x86_64-${{ steps.get_version.outputs.VERSION }}/*
@@ -89,7 +90,7 @@ jobs:
             WatermarkRemover-macos-${{ steps.get_version.outputs.VERSION }}.zip
             LICENSE
 #      - name: Create Release 2
-#        uses: ncipollo/release-action@v1
+#        uses: ncipollo/release-action@v1 # breaking changes
 #        with:
 #          artifacts: "release.tar.gz,foo/*.txt"
 #          bodyFile: "body.md"
