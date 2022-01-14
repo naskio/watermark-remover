@@ -82,7 +82,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          body_path: CHANGELOG.md  # ${{ github.workspace }}/CHANGELOG.md
+          body_path: ${{ github.workspace }}/CHANGELOG.md
           files: |
             linux-x86_64-${{ steps.get_version.outputs.VERSION }}/*
             windows-x86_64-${{ steps.get_version.outputs.VERSION }}/*
