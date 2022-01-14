@@ -1,12 +1,12 @@
 import PyInstaller.__main__
-from version import __version__
+# from WatermarkRemover import __version__
 from sys import platform as _platform
 from pathlib import Path
 
 name = 'WatermarkRemover'
 icon = None
 
-BASE_DIR = Path(__file__).parent
+BASE_DIR = Path(__file__).parent.parent
 RESOURCES_DIR = BASE_DIR / 'resources'
 
 # platform specific code
@@ -27,6 +27,7 @@ PyInstaller.__main__.run([
     f'--icon={icon}',
     '--clean',
     '--log-level=WARN',
-    f'--name={name}-{__version__}',
+    # f'--name={name}-{__version__}',
+    f'--name={name}',
     '-y'
 ])
