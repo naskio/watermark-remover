@@ -80,11 +80,11 @@ jobs:
         with:
           name: macos-latest
           path: macos-latest
-      #      - run: |
-      #          mv cli-binary-linux/XX cli-binary-linux/XX-${{ steps.get_version.outputs.VERSION }}-linux-x86_64
-      #          mv cli-binary-linux/XXXX cli-binary-linux/XXXX-${{ steps.get_version.outputs.VERSION }}-linux-x86_64
-      #          mv cli-binary-windows/XX.exe cli-binary-windows/XX-${{ steps.get_version.outputs.VERSION }}-windows-x86_64.exe
-      #          mv cli-binary-windows/XXXX.exe cli-binary-windows/XXXX-${{ steps.get_version.outputs.VERSION }}-windows-x86_64.exe
+      - name: Renaming the files
+        run: |
+          for f in windows-latest/* ; do mv — “$f” “${{ steps.get_version.outputs.VERSION }}-windows-x86_64-$f” ; done
+          for f in ubuntu-latest/* ; do mv — “$f” “${{ steps.get_version.outputs.VERSION }}-linux-x86_64-$f” ; done
+          for f in macos-latest/* ; do mv — “$f” “${{ steps.get_version.outputs.VERSION }}-macos-x86_64-$f” ; done
       - name: Release
         uses: softprops/action-gh-release@v1
         env:

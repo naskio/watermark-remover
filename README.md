@@ -29,6 +29,29 @@ Python GUI to remove watermarks from Images inside DOCX and PDF files
 
 You will find a directory named `dist` with the executable file `WaterMarkRemover.exe` or `WaterMarkRemover`
 
+## Release
+
+- Change version in file ```version.py```
+
+- Push a new tag to the repository
+
+```
+# list tags
+git tag
+# create new tag
+git tag -a 0.1.0 -m "version 0.1.0"
+# push tag to remote
+git push origin --tags
+# push a specific tag to remote
+git push origin 1.0.0
+# delete local tag
+git tag -d 1.0.0
+# remove remote tag (with release)
+git push --delete origin 1.0.0
+# or push to remote
+git push origin :refs/tags/1.0.0
+```
+
 -----------------------------------------------------------------------------------
 
 # Contribute
