@@ -73,13 +73,18 @@ jobs:
           mv macos-latest/ macos-x86_64-${{ steps.get_version.outputs.VERSION }}/
       - name: List the files
         run: ls -l && ls -l linux-x86_64-${{ steps.get_version.outputs.VERSION }}/ && ls -l windows-x86_64-${{ steps.get_version.outputs.VERSION }}/ && ls -l macos-x86_64-${{ steps.get_version.outputs.VERSION }}/
-      - name: Release
+      - name: create Release
         uses: softprops/action-gh-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           files: |
-            - linux-x86_64-${{ steps.get_version.outputs.VERSION }}/*
-            - windows-x86_64-${{ steps.get_version.outputs.VERSION }}/*
-            - macos-x86_64-${{ steps.get_version.outputs.VERSION }}/*
-            - LICENSE
+            linux-x86_64-${{ steps.get_version.outputs.VERSION }}/*
+            windows-x86_64-${{ steps.get_version.outputs.VERSION }}/*
+            macos-x86_64-${{ steps.get_version.outputs.VERSION }}/*
+#      - name: Create Release 2
+#        uses: ncipollo/release-action@v1
+#        with:
+#          artifacts: "release.tar.gz,foo/*.txt"
+#          bodyFile: "body.md"
+#          token: ${{ secrets.GITHUB_TOKEN }}
