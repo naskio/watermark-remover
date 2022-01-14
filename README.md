@@ -31,7 +31,7 @@ You will find a directory named `dist` with the executable file `WaterMarkRemove
 
 ## Release
 
-- Change version in file ```version.py```
+- Change version in file ```scripts/version.py```
 
 - Push a new tag to the repository
 

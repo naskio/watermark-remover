@@ -2,7 +2,7 @@ from tkinter import Tk, Button, Entry, StringVar, END, RIGHT, X, LEFT, Text, DIS
 from tkinter import filedialog
 from pathlib import Path
 from main import main, generate_output_path
-from version import __version__
+from scripts.version import __version__
 # import time
 from typing import Optional
 
