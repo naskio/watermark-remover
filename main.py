@@ -84,10 +84,10 @@ def remove_watermark_from_docx(input_file: Path, output_file: Path) -> str:
     print(images)
     # print(input_file.absolute())
     doc_tmpl = DocxTemplate(input_file.absolute())
-    coc_tmpl = doc_tmpl.render({})
+    doc_tmpl.render({})
     # print(doc_tmpl.get_docx())
     # print(doc_tmpl.get_xml())
-    # print(doc_tmpl.get_pic_map())
+    print(doc_tmpl.get_pic_map())
     for image in images:
         # placeholder_image = Path(image).stem + Path(image).suffix
         # print('placeholder_image', placeholder_image)
