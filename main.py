@@ -7,6 +7,7 @@ from pikepdf import Pdf, PdfImage, Name
 import cv2
 import zipfile
 import io
+# from quality import improve_text_in_image
 import fire
 
 
@@ -101,6 +102,7 @@ def remove_watermark_from_docx(input_file: Path, output_file: Path) -> str:
     for image in images:
         with z.open(image) as f:
             pil_image = Image.open(f)
+            # pil_image = improve_text_in_image(pil_image)
             # noinspection PyTypeChecker
             opencv_image = cv2.cvtColor(numpy.array(pil_image), cv2.COLOR_RGB2BGR)
             opencv_image = remove_watermark_from_image(opencv_image)
