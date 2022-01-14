@@ -62,9 +62,9 @@ jobs:
           name: macos-latest
           path: macos-latest
       - run: |
-          for f in windows-latest/* ; do mv — “$f” “${{ steps.get_version.outputs.VERSION }}-windows-x86_64-$f” ; done
-          for f in ubuntu-latest/* ; do mv — “$f” “${{ steps.get_version.outputs.VERSION }}-linux-x86_64-$f” ; done
-          for f in macos-latest/* ; do mv — “$f” “${{ steps.get_version.outputs.VERSION }}-macos-x86_64-$f” ; done
+          for f in windows-latest/* ; do mv — "$f" "windows-latest/${{ steps.get_version.outputs.VERSION }}-windows-x86_64-$f" ; done
+          for f in ubuntu-latest/* ; do mv — "$f" "ubuntu-latest/${{ steps.get_version.outputs.VERSION }}-linux-x86_64-$f" ; done
+          for f in macos-latest/* ; do mv — "$f" "macos-latest/${{ steps.get_version.outputs.VERSION }}-macos-x86_64-$f" ; done
       - name: Release
         uses: softprops/action-gh-release@v1
         env:
