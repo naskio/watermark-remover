@@ -46,6 +46,7 @@ jobs:
     needs: [ build ]
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v2 # get CHANGELOG.md
       #      - uses: actions/checkout@v2 # get the scripts
       #      - name: Set up Python ${{ matrix.python-version }} # setup python
       #        uses: actions/setup-python@v2
@@ -82,7 +83,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          body_path: ${{ github.workspace }}/CHANGELOG.md
+          #          body_path: ${{ github.workspace }}/CHANGELOG.md
+          body_path: CHANGELOG.md
           files: |
             linux-x86_64-${{ steps.get_version.outputs.VERSION }}/*
             windows-x86_64-${{ steps.get_version.outputs.VERSION }}/*
