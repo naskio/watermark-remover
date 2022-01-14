@@ -71,6 +71,10 @@ jobs:
           mv ubuntu-latest/ linux-x86_64-${{ steps.get_version.outputs.VERSION }}/
           mv windows-latest/ windows-x86_64-${{ steps.get_version.outputs.VERSION }}/
           mv macos-latest/ macos-x86_64-${{ steps.get_version.outputs.VERSION }}/
+      - uses: papeloto/action-zip@v1
+        with:
+          files: macos-x86_64-${{ steps.get_version.outputs.VERSION }}/*.app # not sure about *.app (pattern)
+          dest: macos-x86_64-${{ steps.get_version.outputs.VERSION }}.zip
       - name: List the files
         run: ls -l && ls -l linux-x86_64-${{ steps.get_version.outputs.VERSION }}/ && ls -l windows-x86_64-${{ steps.get_version.outputs.VERSION }}/ && ls -l macos-x86_64-${{ steps.get_version.outputs.VERSION }}/
       - name: create Release
@@ -81,7 +85,10 @@ jobs:
           files: |
             linux-x86_64-${{ steps.get_version.outputs.VERSION }}/*
             windows-x86_64-${{ steps.get_version.outputs.VERSION }}/*
+            windows-x86_64-${{ steps.get_version.outputs.VERSION }}/*.exe
             macos-x86_64-${{ steps.get_version.outputs.VERSION }}/*
+            macos-x86_64-${{ steps.get_version.outputs.VERSION }}/*.app
+            macos-x86_64-${{ steps.get_version.outputs.VERSION }}.zip
 #      - name: Create Release 2
 #        uses: ncipollo/release-action@v1
 #        with:

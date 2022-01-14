@@ -71,6 +71,7 @@ def remove_watermark_from_docx(input_file: Path, output_file: Path) -> str:
     :param output_file:
     :return:
     """
+    # TODO: use tmplx instead of docx
     z = zipfile.ZipFile(input_file)
     # print list of valid attributes for ZipFile object
     # print(dir(z))
