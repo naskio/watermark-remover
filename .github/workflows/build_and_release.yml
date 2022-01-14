@@ -74,7 +74,7 @@ jobs:
       - name: Zip MAC OS app
         uses: montudor/action-zip@v1
         with:
-          args: zip -qq -R -r macos-x86_64-${{ steps.get_version.outputs.VERSION }}.zip macos-x86_64-${{ steps.get_version.outputs.VERSION }}/*.app
+          args: zip -qq -r WatermarkRemover-${{ steps.get_version.outputs.VERSION }}.zip macos-x86_64-${{ steps.get_version.outputs.VERSION }}/*.app
       - name: List the files
         run: ls -l && ls -l linux-x86_64-${{ steps.get_version.outputs.VERSION }}/ && ls -l windows-x86_64-${{ steps.get_version.outputs.VERSION }}/ && ls -l macos-x86_64-${{ steps.get_version.outputs.VERSION }}/
       - name: create Release
