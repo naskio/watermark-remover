@@ -68,9 +68,11 @@ jobs:
           path: macos-latest
       - name: Rename the artifacts
         run: |
-          mv ubuntu-latest linux-x86_64-${{ steps.get_version.outputs.VERSION }}
-          mv windows-latest windows-x86_64-${{ steps.get_version.outputs.VERSION }}
-          mv macos-latest macos-x86_64-${{ steps.get_version.outputs.VERSION }}
+          mv ubuntu-latest/ linux-x86_64-${{ steps.get_version.outputs.VERSION }}/
+          mv windows-latest/ windows-x86_64-${{ steps.get_version.outputs.VERSION }}/
+          mv macos-latest/ macos-x86_64-${{ steps.get_version.outputs.VERSION }}/
+      - name: List the files
+        run: ls -l && ls -l linux-x86_64-${{ steps.get_version.outputs.VERSION }}/ && ls -l windows-x86_64-${{ steps.get_version.outputs.VERSION }}/ && ls -l macos-x86_64-${{ steps.get_version.outputs.VERSION }}/
       - name: Release
         uses: softprops/action-gh-release@v1
         env:
