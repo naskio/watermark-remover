@@ -31,7 +31,7 @@ jobs:
 
       - name: Build
         run: |
-          python build.py
+          python scripts/build.py
 
       - name: Upload Artifacts
         uses: actions/upload-artifact@v2
@@ -46,7 +46,12 @@ jobs:
     needs: [ build ]
     runs-on: ubuntu-latest
     steps:
-      - name: Get the version
+      #      - uses: actions/checkout@v2 # get the scripts
+      #      - name: Set up Python ${{ matrix.python-version }} # setup python
+      #        uses: actions/setup-python@v2
+      #        with:
+      #          python-version: 3.7
+      - name: Get the version # get the version from the tag
         id: get_version
         run: echo ::set-output name=VERSION::${GITHUB_REF#refs/tags/}
       - uses: actions/download-artifact@v2
@@ -61,17 +66,18 @@ jobs:
         with:
           name: macos-latest
           path: macos-latest
-      - run: |
-          for f in windows-latest/* ; do mv — "$f" "windows-latest/${{ steps.get_version.outputs.VERSION }}-windows-x86_64-$f" ; done
-          for f in ubuntu-latest/* ; do mv — "$f" "ubuntu-latest/${{ steps.get_version.outputs.VERSION }}-linux-x86_64-$f" ; done
-          for f in macos-latest/* ; do mv — "$f" "macos-latest/${{ steps.get_version.outputs.VERSION }}-macos-x86_64-$f" ; done
+      - name: Rename the artifacts
+        run: |
+          mv ubuntu-latest linux-x86_64-${{ steps.get_version.outputs.VERSION }}
+          mv windows-latest windows-x86_64-${{ steps.get_version.outputs.VERSION }}
+          mv macos-latest macos-x86_64-${{ steps.get_version.outputs.VERSION }}
       - name: Release
         uses: softprops/action-gh-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           files: |
-            windows-latest/*
-            ubuntu-latest/*
-            macos-latest/*
-            LICENSE
+            - linux-x86_64-${{ steps.get_version.outputs.VERSION }}/*
+            - windows-x86_64-${{ steps.get_version.outputs.VERSION }}/*
+            - macos-x86_64-${{ steps.get_version.outputs.VERSION }}/*
+            - LICENSE

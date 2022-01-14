@@ -15,9 +15,9 @@ Python GUI to remove watermarks from Images inside DOCX and PDF files
   ```
 
 3. Generate builds
-    1. using `build.py`
+    1. using `scripts/build.py`
        ```shell
-       python build.py
+       python scripts/build.py
        ```
     2. or Using [pyinstaller](https://pyinstaller.readthedocs.io/en/stable/index.html)
        ```shell
