@@ -1,0 +1,7 @@
+numpy
+Pillow
+pikepdf
+opencv-python
+python-docx
+fire
+pyinstaller
