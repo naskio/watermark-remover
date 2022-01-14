@@ -39,25 +39,6 @@ jobs:
           name: ${{ matrix.os }}
           path: dist/
 
-  #      - name: Publish
-  #        uses: ncipollo/release-action@v1
-  #        with:
-  #          artifacts: "dist/*,LICENSE"
-  #          bodyFile: "README.md"
-  #          token: ${{ secrets.GITHUB_TOKEN }}
-  #          generateReleaseNotes: true
-  #          owner: naskio
-  #          allowUpdates: true
-  #          removeArtifacts: false
-  #          replacesArtifacts: false
-
-  #      - name: Release
-  #        uses: softprops/action-gh-release@v1
-  #        if: startsWith(github.ref, 'refs/tags/')
-  #        with:
-  #          files: |
-  #            dist/*
-  #            LICENSE
 
 
   release:
@@ -80,8 +61,7 @@ jobs:
         with:
           name: macos-latest
           path: macos-latest
-      - name: Renaming the files
-        run: |
+      - run: |
           for f in windows-latest/* ; do mv — “$f” “${{ steps.get_version.outputs.VERSION }}-windows-x86_64-$f” ; done
           for f in ubuntu-latest/* ; do mv — “$f” “${{ steps.get_version.outputs.VERSION }}-linux-x86_64-$f” ; done
           for f in macos-latest/* ; do mv — “$f” “${{ steps.get_version.outputs.VERSION }}-macos-x86_64-$f” ; done

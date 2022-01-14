@@ -42,14 +42,15 @@ git tag
 git tag -a 0.1.0 -m "version 0.1.0"
 # push tag to remote
 git push origin --tags
+git push --tags
 # push a specific tag to remote
-git push origin 1.0.0
+git push origin 0.1.0
 # delete local tag
-git tag -d 1.0.0
+git tag -d 0.1.0
 # remove remote tag (with release)
-git push --delete origin 1.0.0
+git push --delete origin 0.1.0
 # or push to remote
-git push origin :refs/tags/1.0.0
+git push origin :refs/tags/0.1.0
 ```
 
 -----------------------------------------------------------------------------------

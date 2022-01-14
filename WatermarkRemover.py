@@ -35,6 +35,20 @@ def open_file():
             log_write(str(e))
 
 
+# def save_file():
+#     tf = filedialog.asksaveasfile(
+#         mode='w',
+#
+#         title="Save file",
+#         defaultextension=".txt"
+#     )
+#     tf.config(mode='w')
+#     pathh.insert(END, tf)
+#     data = str(txtarea.get(1.0, END))
+#     tf.write(data)
+#     tf.close()
+
+
 ws = Tk()
 ws.title(f"Watermark Remover - by nask.io (v{__version__})")
 ws.geometry("600x600")
