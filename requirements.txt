@@ -2,7 +2,8 @@ numpy
 Pillow
 pikepdf
 opencv-python
-fire
 pyinstaller
+numpy
+fire
 # python-docx
-docxtpl
+# docxtpl

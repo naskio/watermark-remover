@@ -1,4 +1,4 @@
-from tkinter import Tk, Button, Entry, StringVar, END, RIGHT, X, LEFT, Text, DISABLED, CENTER
+from tkinter import Tk, Button, Entry, StringVar, END, RIGHT, X, LEFT, Text, DISABLED, CENTER, BooleanVar, Checkbutton
 from tkinter import filedialog
 from pathlib import Path
 from main import main, generate_output_path
@@ -43,7 +43,9 @@ def open_files():
                         output_file = output_dir_path / (input_path.stem + f"_generated{input_path.suffix}")
                         log_write(f'Output: {output_file}')
                         log_write("Processing...")
-                        output_file = main(input_file, str(output_file))
+                        if use_color_replace.get():
+                            log_write(f"use color replace = {use_color_replace.get()}")
+                        output_file = main(input_file, str(output_file), use_color_replace.get())
                         log_write(f'File has been saved successfully to: {output_file}')
                     except Exception as e:
                         log_write(str(e))
@@ -109,6 +111,17 @@ Button(
     command=open_files,
     bg='gray',
     fg='black'
-).pack(side=LEFT, expand=True, fill=X, padx=40)
+).pack(side=RIGHT, expand=True, fill=X, padx=30)
+
+use_color_replace = BooleanVar(value=True)
+Checkbutton(
+    ws,
+    text="Replace using colors",
+    variable=use_color_replace,
+    bg='white',
+    fg='black',
+    offvalue=False,
+    onvalue=True,
+).pack(side=LEFT, expand=True, fill=X, padx=30)
 
 ws.mainloop()
