@@ -6,7 +6,7 @@ pyinstaller
 numpy
 fire
 darkdetect
-ttkthemes
+# ttkthemes
 # python-docx
 # docxtpl
 # PyPDF2
