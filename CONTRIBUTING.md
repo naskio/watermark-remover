@@ -51,6 +51,7 @@ To release a new version of the project you need to:
 You can create a release using the following command:
 
 ```shell
+VERSION="0.4.0"; MESSAGE="v0.4.0"; git tag $VERSION -a -m $MESSAGE; git push origin
 VERSION="0.4.0"; MESSAGE="v0.4.0"; git tag $VERSION -a -m $MESSAGE; git push origin $VERSION
 ```
 
