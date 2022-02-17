@@ -1,64 +1,22 @@
 # watermark-remover
 
-Python GUI to remove watermarks from Images inside DOCX and PDF files
+Python GUI to remove watermarks from images, docx and pdf files.
 
-## Installation
+## Getting Started
 
-## Build
+### Install
 
-1. Install python 3.7 or later
-2. Install requirements
+Download the latest release from [GitHub releases](https://github.com/naskio/watermark-remover/releases) and run it.
 
-  ```shell
-  python -m pip install --upgrade pip wheel setuptools
-  python -m pip install -r requirements.txt
-  ```
+![screenshot](resources/screenshot.png)
 
-3. Generate builds
-    1. using `scripts/build.py`
-       ```shell
-       python scripts/build.py
-       ```
-    2. or Using [pyinstaller](https://pyinstaller.readthedocs.io/en/stable/index.html)
-       ```shell
-       pyinstaller --onefile --windowed --icon=<project-logo>.ico --add-data "<folder>;<folder>" <filename.py>
-       pyinstaller --onefile --windowed WaterMarkRemover.py
-       ```
+## Contributing
 
-## Usage
+[Pull requests](https://github.com/naskio/watermark-remover/pulls) are welcome! For any bug reports, please create
+an [issue](https://github.com/naskio/watermark-remover/issues).
 
-You will find a directory named `dist` with the executable file `WaterMarkRemover.exe` or `WaterMarkRemover`
+Start by reading the [contributor guideline](CONTRIBUTING.md).
 
-## Release
-
-- Change version in file ```scripts/version.py```
-
-- Push a new tag to the repository
-
-```
-# list tags
-git tag
-# create new tag
-git tag -a 0.1.0 -m "version 0.1.0"
-# push tag to remote
-git push origin --tags
-git push --tags
-# push a specific tag to remote
-git push origin 0.1.0
-# delete local tag
-git tag -d 0.1.0
-# remove remote tag (with release)
-git push --delete origin 0.1.0
-# or push to remote
-git push origin :refs/tags/0.1.0
-```
-
------------------------------------------------------------------------------------
-
-# Contribute
-
-Pull requests are welcome! For any bug reports, please create an issue.
-
-# License
+## License
 
 [License](LICENSE)
