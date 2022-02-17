@@ -51,14 +51,14 @@ To release a new version of the project you need to:
 You can create a release using the following command:
 
 ```shell
-VERSION="0.1.1"; MESSAGE=""; git tag $VERSION -a -m $MESSAGE; git push origin $VERSION
+VERSION="0.4.0"; MESSAGE="v0.4.0"; git tag $VERSION -a -m $MESSAGE; git push origin $VERSION
 ```
 
 ## Cancel release
 
 - Remove the tag from local and remote
   ```shell
-  VERSION="0.1.1"; git tag --delete $VERSION; git push --delete origin $VERSION
+  VERSION="0.4.0"; git tag --delete $VERSION; git push --delete origin $VERSION
   ```
 
 - Delete release from [GitHub](https://github.com/naskio/watermark-remover/releases/).
