@@ -1,6 +1,5 @@
 from tkinter import Tk, StringVar, END, RIGHT, X, LEFT, Text, DISABLED, NORMAL, filedialog
 from tkinter.ttk import Button, Radiobutton, Label
-# from ttkthemes import ThemedTk
 from pathlib import Path
 from main import main, generate_output_path, MethodChoice
 from scripts.version import __version__
@@ -8,6 +7,7 @@ from typing import Optional
 import darkdetect
 
 BASE_DIR = Path(__file__).parent
+DEFAULT_DIR = Path.home() / 'Desktop'
 
 
 def log_clear():
@@ -25,14 +25,14 @@ def log_write(text):
 
 def open_files():
     input_files = filedialog.askopenfilenames(
-        initialdir=str(BASE_DIR),
+        initialdir=str(DEFAULT_DIR),
         title="Open Word or PDF file",
         filetypes=[("Word Documents", ".docx"), ("PDF Files", ".pdf"), ("Image Files", ".png"),
                    ("Image Files", ".jpg"), ("Image Files", ".jpeg"), ],
     )
     log_clear()
     if input_files:  # file selected
-        output_dir = get_output_dir(BASE_DIR)
+        output_dir = get_output_dir(DEFAULT_DIR)
         if output_dir:
             output_dir_path = Path(output_dir)
             if not output_dir_path.exists():
@@ -104,16 +104,20 @@ def get_output_dir(base_dir: Path) -> Optional[str]:
 
 
 ws = Tk()
-
+# ws.tk.call("source", "azure.tcl")
 # setting theme
-ws.tk.call("source", BASE_DIR / 'resources' / "azure.tcl")
-if darkdetect.isLight():
-    ws.tk.call("set_theme", "light")
+THEME_FOLDER = BASE_DIR / 'resources' / 'azure'
+THEME_FILE = THEME_FOLDER / 'azure.tcl'
+with open(THEME_FILE, 'r') as f:
+    lines = f"""source {THEME_FOLDER / 'theme' / 'light.tcl'}
+source {THEME_FOLDER / 'theme' / 'dark.tcl'}
+"""
+    lines += f.read()
+    ws.tk.eval(lines)
+if darkdetect and darkdetect.isDark():
+    ws.tk.call("set_theme", "dark")
 else:
-    ws.tk.call("set_theme", "dark")  # dark]
-# pixmap_themes = ["arc", "blue", "clearlooks", "elegance", "kroc", "plastik", "radiance", "winxpblue"
-# ws = ThemedTk(theme="clearlooks")
-
+    ws.tk.call("set_theme", "light")
 ws.title(f"Watermark Remover v{__version__} - by [www.nask.io]")
 # ws.resizable(False, False)
 # center window

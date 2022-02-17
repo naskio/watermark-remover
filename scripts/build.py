@@ -2,6 +2,7 @@ import PyInstaller.__main__
 from version import __version__
 from sys import platform as _platform
 from pathlib import Path
+import os
 
 name = 'WatermarkRemover'
 icon = None
@@ -32,5 +33,6 @@ PyInstaller.__main__.run([
     '--clean',
     '--log-level=WARN',
     f'--name={name}-{_os}-{__version__}',
+    f'--add-data={BASE_DIR / "resources" / "azure"}:{os.path.join("resources", "azure")}',
     '-y'
 ])
