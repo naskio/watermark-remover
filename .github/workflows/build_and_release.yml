@@ -73,6 +73,10 @@ jobs:
           mv ubuntu-latest/ linux-x86_64-${{ steps.get_version.outputs.VERSION }}/
           mv windows-latest/ windows-x86_64-${{ steps.get_version.outputs.VERSION }}/
           mv macos-latest/ macos-x86_64-${{ steps.get_version.outputs.VERSION }}/
+      - name: add permission to macOS artifacts and rename app
+        run: |
+          chmod +x macos-x86_64-${{ steps.get_version.outputs.VERSION }}/WatermarkRemover-macos-${{ steps.get_version.outputs.VERSION }}.app/Contents/MacOS/WatermarkRemover-macos-${{ steps.get_version.outputs.VERSION }}
+          mv macos-x86_64-${{ steps.get_version.outputs.VERSION }}/WatermarkRemover-macos-${{ steps.get_version.outputs.VERSION }}.app macos-x86_64-${{ steps.get_version.outputs.VERSION }}/WatermarkRemover.app
       - name: Zip MAC OS app
         uses: montudor/action-zip@v1
         with:
