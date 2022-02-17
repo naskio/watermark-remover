@@ -1,20 +1,26 @@
-from tkinter import Tk, Button, Entry, StringVar, END, RIGHT, X, LEFT, Text, DISABLED, CENTER, BooleanVar, Checkbutton
-from tkinter import filedialog
+from tkinter import Tk, StringVar, END, RIGHT, X, LEFT, Text, DISABLED, NORMAL, filedialog
+from tkinter.ttk import Button, Radiobutton, Label
+# from ttkthemes import ThemedTk
 from pathlib import Path
-from main import main, generate_output_path
+from main import main, generate_output_path, MethodChoice
 from scripts.version import __version__
 from typing import Optional
+import darkdetect
 
 BASE_DIR = Path(__file__).parent
 
 
 def log_clear():
+    log_txt_area.config(state=NORMAL)
     log_txt_area.delete(1.0, END)
+    log_txt_area.config(state=DISABLED)
 
 
 def log_write(text):
+    log_txt_area.config(state=NORMAL)
     log_txt_area.insert(END, text)
     log_txt_area.insert(END, '\n')
+    log_txt_area.config(state=DISABLED)
 
 
 def open_files():
@@ -43,9 +49,9 @@ def open_files():
                         output_file = output_dir_path / (input_path.stem + f"_generated{input_path.suffix}")
                         log_write(f'Output: {output_file}')
                         log_write("Processing...")
-                        if use_color_replace.get():
-                            log_write(f"use color replace = {use_color_replace.get()}")
-                        output_file = main(input_file, str(output_file), use_color_replace.get())
+                        p_method_choice = MethodChoice.from_str(method_choice.get())
+                        log_write(f"method: {p_method_choice.value}")
+                        output_file = main(input_file, str(output_file), p_method_choice)
                         log_write(f'File has been saved successfully to: {output_file}')
                     except Exception as e:
                         log_write(str(e))
@@ -98,30 +104,54 @@ def get_output_dir(base_dir: Path) -> Optional[str]:
 
 
 ws = Tk()
-ws.title(f"Watermark Remover - by nask.io (v{__version__})")
-ws.geometry("600x600")
-ws['bg'] = 'gray'
 
-log_txt_area = Text(ws, width=60, height=30, bg='white', fg='black')
+# setting theme
+ws.tk.call("source", BASE_DIR / 'resources' / "azure.tcl")
+if darkdetect.isLight():
+    ws.tk.call("set_theme", "light")
+else:
+    ws.tk.call("set_theme", "dark")  # dark]
+# pixmap_themes = ["arc", "blue", "clearlooks", "elegance", "kroc", "plastik", "radiance", "winxpblue"
+# ws = ThemedTk(theme="clearlooks")
+
+ws.title(f"Watermark Remover v{__version__} - by [www.nask.io]")
+# ws.resizable(False, False)
+# center window
+window_height = 600
+window_width = 720
+screen_width = ws.winfo_screenwidth()
+screen_height = ws.winfo_screenheight()
+x_coordinate = int((screen_width / 2) - (window_width / 2))
+y_coordinate = int((screen_height / 2) - (window_height / 2))
+ws.geometry(f"{window_width}x{window_height}+{x_coordinate}+{y_coordinate}")
+# ws.geometry("694x600")
+# ws['bg'] = 'gray'
+
+log_txt_area = Text(
+    ws, width=60, height=30, state=DISABLED,
+    # bg='white', fg='black'
+)
 log_txt_area.pack(pady=30)
 
 Button(
     ws,
     text="Choose Files",
     command=open_files,
-    bg='gray',
-    fg='black'
+    # bg='gray',
+    # fg='black'
 ).pack(side=RIGHT, expand=True, fill=X, padx=30)
 
-use_color_replace = BooleanVar(value=True)
-Checkbutton(
-    ws,
-    text="Replace using colors",
-    variable=use_color_replace,
-    bg='white',
-    fg='black',
-    offvalue=False,
-    onvalue=True,
-).pack(side=LEFT, expand=True, fill=X, padx=30)
+# display title
+Label(ws, text="Method").pack(side=LEFT, expand=True, fill=X, padx=30)
+method_choice = StringVar(value=MethodChoice.geofond1dot22.name)
+for method in MethodChoice:
+    Radiobutton(
+        ws,
+        text=method.value,
+        variable=method_choice,
+        value=method.name,
+        # bg='gray',
+        # fg='black'
+    ).pack(side=LEFT, expand=True, fill=X, padx=5)
 
 ws.mainloop()
