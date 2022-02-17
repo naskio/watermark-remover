@@ -35,6 +35,12 @@ Generate builds:
 
 You will find a directory named `dist` with the executable file `WaterMarkRemover.exe` or `WaterMarkRemover`
 
+to run the app on macOS:
+
+```
+open -n WatermarkRemover.app
+```
+
 --------------------------------------------------------------------------------
 
 # Release

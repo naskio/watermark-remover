@@ -19,8 +19,8 @@ jobs:
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v2
         with:
-          #          python-version: 3.7
-          python-version: '3.10'
+          #          python-version: '3.10'
+          python-version: 3.7
           cache: 'pip'
       - name: Upgrade pip
         run: |
@@ -81,6 +81,12 @@ jobs:
         uses: montudor/action-zip@v1
         with:
           args: zip -qq -r WatermarkRemover-macos-${{ steps.get_version.outputs.VERSION }}.zip macos-x86_64-${{ steps.get_version.outputs.VERSION }}/WatermarkRemover.app
+      - name: rename assets
+        run: |
+          mv linux-x86_64-${{ steps.get_version.outputs.VERSION }}/WatermarkRemover-linux-${{ steps.get_version.outputs.VERSION }} linux-x86_64-${{ steps.get_version.outputs.VERSION }}/WatermarkRemover-linux 
+          mv macos-x86_64-${{ steps.get_version.outputs.VERSION }}/WatermarkRemover-macos-${{ steps.get_version.outputs.VERSION }} macos-x86_64-${{ steps.get_version.outputs.VERSION }}/WatermarkRemover-macos-cmd
+          mv windows-x86_64-${{ steps.get_version.outputs.VERSION }}/WatermarkRemover-wind32-${{ steps.get_version.outputs.VERSION }}.exe windows-x86_64-${{ steps.get_version.outputs.VERSION }}/WatermarkRemover.exe
+          mv WatermarkRemover-macos-${{ steps.get_version.outputs.VERSION }}.zip WatermarkRemover-macos.zip
       - name: List the files
         run: ls -l && ls -l linux-x86_64-${{ steps.get_version.outputs.VERSION }}/ && ls -l windows-x86_64-${{ steps.get_version.outputs.VERSION }}/ && ls -l macos-x86_64-${{ steps.get_version.outputs.VERSION }}/
       - name: create Release
