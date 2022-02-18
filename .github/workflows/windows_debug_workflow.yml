@@ -1,0 +1,56 @@
+on:
+  workflow_dispatch:
+    #    inputs:
+    #      logLevel:
+    #        description: 'Log level'
+    #        required: true
+    #        default: 'warning'
+    #        type: choice
+    #        options:
+    #          - info
+    #          - warning
+    #          - debug
+    version:
+      description: 'version'
+      required: true
+      default: '0.4.1'
+      type: string
+
+jobs:
+  debug_job:
+    name: Debug on windows
+    runs-on: windows-latest
+    steps:
+      #      - run: |
+      #          echo "Log level: $LEVEL"
+      #          echo "Tags: $TAGS"
+      #          echo "Environment: $ENVIRONMENT"
+      #        env:
+      #          LEVEL: ${{ github.event.inputs.logLevel }}
+      #          TAGS: ${{ github.event.inputs.tags }}
+      - uses: actions/checkout@v2
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.10'
+          cache: 'pip'
+      - name: Upgrade pip
+        run: |
+          python -m pip install --upgrade pip
+
+      - name: Install Dependencies
+        run: |
+          python -m pip install -r requirements.txt
+
+      - name: Build
+        run: |
+          python scripts/build.py
+
+      - name: Rename + Test .exe
+        run: |
+          dir
+          ren .\dist\WatermarkRemover-wind32-${{ steps.get_version.outputs.VERSION }}.exe .\dist\WatermarkRemover.exe
+          .\test_scripts\run_winn.bat .\dist\WatermarkRemover.exe 30
+          echo Test result: %errorlevel%
+        shell: cmd

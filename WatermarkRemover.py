@@ -123,6 +123,7 @@ source {THEME_FOLDER / 'theme' / 'dark.tcl'}
     except Exception as e:
         print(e)
         print("Theme not loaded")
+        raise e
         # ws['bg'] = 'gray'
 
     ws.title(f"Watermark Remover v{__version__} - by [www.nask.io]")
