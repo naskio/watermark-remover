@@ -100,7 +100,7 @@ jobs:
             linux-x86_64-${{ steps.get_version.outputs.VERSION }}/*
             windows-x86_64-${{ steps.get_version.outputs.VERSION }}/*
             macos-x86_64-${{ steps.get_version.outputs.VERSION }}/*
-            WatermarkRemover-macos-${{ steps.get_version.outputs.VERSION }}.zip
+            WatermarkRemover-macos.zip
             LICENSE
 #      - name: Create Release 2
 #        uses: ncipollo/release-action@v1 # breaking changes
