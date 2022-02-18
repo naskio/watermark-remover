@@ -107,7 +107,6 @@ try:
     ws = Tk()
     # ws.tk.call("source", "azure.tcl")
     # setting theme
-    # TODO: fix theme not loading on Windows => put light and dark on same file as azure.tcl
     try:
         THEME_FOLDER = BASE_DIR / 'resources' / 'azure'
         THEME_FILE = THEME_FOLDER / 'azure.tcl'

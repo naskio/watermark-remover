@@ -1,3 +1,6 @@
 # Change Log
 
-- added GEOFOND v1.22 support
+- Handling exceptions
+- Handling theme not loading
+
+- next: fix theme loading
