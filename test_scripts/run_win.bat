@@ -9,8 +9,7 @@ echo filename is %FILENAME%
 dir
 
 START %EXECUTABLE%
-timeout %TIMEOUT% /nobreak
-
+timeout /T %TIMEOUT% /NOBREAK > nul
 
 tasklist /fi "ImageName eq %FILENAME%" /fo csv 2>NUL | find /I "%FILENAME%">NUL
 
@@ -29,8 +28,3 @@ IF %ERRORLEVEL% NEQ 0 (
 ENDLOCAL
 
 echo END
-
-Rem cd Desktop\watermark-remover\
-Rem .\test_scripts\run_win.bat .\scripts\dist\WatermarkRemover.exe 20
-Rem .\test_scripts\run_win.bat .\scripts\dist\tt.exe 2
-Rem .\test_scripts\run_win.bat .\scripts\dist\5min.exe 5
