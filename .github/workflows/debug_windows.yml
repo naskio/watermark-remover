@@ -2,21 +2,12 @@ name: Debug Windows
 
 on:
   workflow_dispatch:
-    #    inputs:
-    #      logLevel:
-    #        description: 'Log level'
-    #        required: true
-    #        default: 'warning'
-    #        type: choice
-    #        options:
-    #          - info
-    #          - warning
-    #          - debug
-    version:
-      description: 'version'
-      required: true
-      default: '0.4.1'
-      type: string
+    inputs:
+      version:
+        description: 'version'
+        required: true
+        default: '0.4.1'
+        type: string
 
 jobs:
   debug_job:
