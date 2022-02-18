@@ -14,7 +14,7 @@ Contributions are welcome!
     ```
 
 3. Install os dependencies of [pikepdf](https://pikepdf.readthedocs.io/en/latest/)
-   , [Pillow](https://pillow.readthedocs.io/en/stable/), etc (check `requirements.txt`)
+   , [Pillow](https://pillow.readthedocs.io/en/stable/), etc. (check `requirements.txt`)
 
 --------------------------------------------------------------------------------
 

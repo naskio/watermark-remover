@@ -1,11 +1,10 @@
-numpy
-Pillow
-pikepdf
-opencv-python
-pyinstaller
-numpy
-fire
-darkdetect
+numpy==1.21.5
+Pillow==9.0.1
+pikepdf==5.0.0
+opencv-python==4.5.5.62
+pyinstaller==4.9
+fire==0.4.0
+darkdetect==0.5.1
 # python-docx
 # docxtpl
 # PyPDF2
