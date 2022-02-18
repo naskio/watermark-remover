@@ -1,3 +1,5 @@
+name: Debug Windows
+
 on:
   workflow_dispatch:
     #    inputs:
@@ -35,6 +37,8 @@ jobs:
         with:
           python-version: '3.10'
           cache: 'pip'
+      - run: |
+          echo The version is ${{ github.event.inputs.version }}
       - name: Upgrade pip
         run: |
           python -m pip install --upgrade pip
@@ -51,6 +55,7 @@ jobs:
         run: |
           dir
           ren .\dist\WatermarkRemover-wind32-${{ steps.get_version.outputs.VERSION }}.exe .\dist\WatermarkRemover.exe
-          .\test_scripts\run_winn.bat .\dist\WatermarkRemover.exe 30
-          echo Test result: %errorlevel%
+          .\test_scripts\run_win.bat .\dist\WatermarkRemover.exe 30
+          echo Test result: %ERRORLEVEL%
         shell: cmd
+        #          cmd /c ".\test_scripts\run_win.bat .\dist\WatermarkRemover.exe 30"
