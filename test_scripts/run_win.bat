@@ -8,7 +8,7 @@ echo executable is %EXECUTABLE%
 echo filename is %FILENAME%
 dir
 
-START %EXECUTABLE%
+START "" %EXECUTABLE%
 
 echo Waiting for %TIMEOUT% seconds...
 ping 127.0.0.1 -n %TIMEOUT% > NUL
