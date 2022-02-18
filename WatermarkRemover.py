@@ -108,7 +108,7 @@ ws = Tk()
 # setting theme
 THEME_FOLDER = BASE_DIR / 'resources' / 'azure'
 THEME_FILE = THEME_FOLDER / 'azure.tcl'
-with open(THEME_FILE, 'r') as f:
+with open(THEME_FILE, 'r', encoding="utf-8") as f:
     lines = f"""source {THEME_FOLDER / 'theme' / 'light.tcl'}
 source {THEME_FOLDER / 'theme' / 'dark.tcl'}
 """
