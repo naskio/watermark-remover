@@ -9,7 +9,10 @@ echo filename is %FILENAME%
 dir
 
 START %EXECUTABLE%
-timeout /T %TIMEOUT% /NOBREAK > nul
+
+echo Waiting for %TIMEOUT% seconds...
+ping 127.0.0.1 -n %TIMEOUT% > NUL
+
 
 tasklist /fi "ImageName eq %FILENAME%" /fo csv 2>NUL | find /I "%FILENAME%">NUL
 
