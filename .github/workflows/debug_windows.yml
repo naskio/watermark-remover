@@ -13,6 +13,7 @@ jobs:
   debug_job:
     name: Debug on windows
     runs-on: windows-latest
+    timeout-minutes: 5
     steps:
       #      - run: |
       #          echo "Log level: $LEVEL"
