@@ -103,59 +103,70 @@ def get_output_dir(base_dir: Path) -> Optional[str]:
         return str(_dir)
 
 
-ws = Tk()
-# ws.tk.call("source", "azure.tcl")
-# setting theme
-THEME_FOLDER = BASE_DIR / 'resources' / 'azure'
-THEME_FILE = THEME_FOLDER / 'azure.tcl'
-with open(THEME_FILE, 'r', encoding="utf-8") as f:
-    lines = f"""source {THEME_FOLDER / 'theme' / 'light.tcl'}
+try:
+    ws = Tk()
+    # ws.tk.call("source", "azure.tcl")
+    # setting theme
+    # TODO: fix theme not loading on Windows => put light and dark on same file as azure.tcl
+    try:
+        THEME_FOLDER = BASE_DIR / 'resources' / 'azure'
+        THEME_FILE = THEME_FOLDER / 'azure.tcl'
+        with open(THEME_FILE, 'r', encoding="utf-8") as f:
+            lines = f"""source {THEME_FOLDER / 'theme' / 'light.tcl'}
 source {THEME_FOLDER / 'theme' / 'dark.tcl'}
-"""
-    lines += f.read()
-    ws.tk.eval(lines)
-if darkdetect and darkdetect.isDark():
-    ws.tk.call("set_theme", "dark")
-else:
-    ws.tk.call("set_theme", "light")
-ws.title(f"Watermark Remover v{__version__} - by [www.nask.io]")
-# ws.resizable(False, False)
-# center window
-window_height = 600
-window_width = 720
-screen_width = ws.winfo_screenwidth()
-screen_height = ws.winfo_screenheight()
-x_coordinate = int((screen_width / 2) - (window_width / 2))
-y_coordinate = int((screen_height / 2) - (window_height / 2))
-ws.geometry(f"{window_width}x{window_height}+{x_coordinate}+{y_coordinate}")
-# ws.geometry("694x600")
-# ws['bg'] = 'gray'
+        """
+            lines += f.read()
+            ws.tk.eval(lines)
+        if darkdetect and darkdetect.isDark():
+            ws.tk.call("set_theme", "dark")
+        else:
+            ws.tk.call("set_theme", "light")
+    except Exception as e:
+        print(e)
+        print("Theme not loaded")
+        # ws['bg'] = 'gray'
 
-log_txt_area = Text(
-    ws, width=60, height=30, state=DISABLED,
-    # bg='white', fg='black'
-)
-log_txt_area.pack(pady=30)
+    ws.title(f"Watermark Remover v{__version__} - by [www.nask.io]")
+    # ws.resizable(False, False)
+    # center window
+    window_height = 696
+    window_width = 720
+    screen_width = ws.winfo_screenwidth()
+    screen_height = ws.winfo_screenheight()
+    x_coordinate = int((screen_width / 2) - (window_width / 2))
+    y_coordinate = int((screen_height / 2) - (window_height / 2))
+    ws.geometry(f"{window_width}x{window_height}+{x_coordinate}+{y_coordinate}")
+    # ws.geometry("694x600")
 
-Button(
-    ws,
-    text="Choose Files",
-    command=open_files,
-    # bg='gray',
-    # fg='black'
-).pack(side=RIGHT, expand=True, fill=X, padx=30)
+    log_txt_area = Text(
+        ws, width=60, height=30, state=DISABLED,
+        # bg='white', fg='black'
+    )
+    log_txt_area.pack(pady=30)
 
-# display title
-Label(ws, text="Method").pack(side=LEFT, expand=True, fill=X, padx=30)
-method_choice = StringVar(value=MethodChoice.geofond1dot22.name)
-for method in MethodChoice:
-    Radiobutton(
+    Button(
         ws,
-        text=method.value,
-        variable=method_choice,
-        value=method.name,
+        text="Choose Files",
+        command=open_files,
         # bg='gray',
         # fg='black'
-    ).pack(side=LEFT, expand=True, fill=X, padx=5)
+    ).pack(side=RIGHT, expand=True, fill=X, padx=30)
 
-ws.mainloop()
+    # display title
+    Label(ws, text="Method").pack(side=LEFT, expand=True, fill=X, padx=30)
+    method_choice = StringVar(value=MethodChoice.geofond1dot22.name)
+    for method in MethodChoice:
+        Radiobutton(
+            ws,
+            text=method.value,
+            variable=method_choice,
+            value=method.name,
+            # bg='gray',
+            # fg='black'
+        ).pack(side=LEFT, expand=True, fill=X, padx=5)
+
+    ws.mainloop()
+except Exception as e:
+    print("Unhandled exception")
+    print(e)
+    exit(1)
