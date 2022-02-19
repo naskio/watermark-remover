@@ -45,10 +45,14 @@ jobs:
 
       - name: Rename .exe + run .exe
         run: |
+          Write-Host "Current directory:"
           Get-ChildItem
+          Write-Host ".\dist directory:"
           Get-ChildItem -Path ".\dist"
           Rename-Item -Path ".\dist\WatermarkRemover-wind32-${{ github.event.inputs.version }}.exe" -NewName "WatermarkRemover.exe"
+          Write-Host "Current directory:"
           Get-ChildItem
+          Write-Host ".\dist directory:"
           Get-ChildItem -Path ".\dist"
           Write-Host "starting .\dist\WatermarkRemover.exe ..."
           Start-Process -FilePath ".\dist\WatermarkRemover.exe"
