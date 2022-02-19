@@ -1,4 +1,4 @@
-name: Debug Windows
+name: Debug Linux (ubuntu)
 
 on:
   workflow_dispatch:
@@ -11,8 +11,8 @@ on:
 
 jobs:
   debug_job:
-    name: Debug on windows
-    runs-on: windows-latest
+    name: Debug on Linux
+    runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v2
@@ -38,17 +38,18 @@ jobs:
         run: |
           python scripts/build.py
 
-      - name: Rename, run and test .exe
-        if: runner.os == 'Windows'
+      - name: Rename, run and test
+        if: runner.os == 'Linux'
         run: |
-          DIR
-          DIR .\dist
-          ECHO renaming .exe ...
-          REN .\dist\WatermarkRemover-wind32-${{ github.event.inputs.version }}.exe "WatermarkRemover.exe"
-          DIR
-          DIR .\dist
-          ECHO running .\test_scripts\run_win.bat ...
-          .\test_scripts\run_win.bat .\dist\WatermarkRemover.exe 30
-          ECHO Test result: %ERRORLEVEL%
-          ECHO done
-        shell: cmd
+          ls
+          ls ./dist
+          # chmod +x ./test_scripts/run_unix.sh
+          echo "renaming ..."
+          mv ./dist/WatermarkRemover-linux-${{ github.event.inputs.version }} ./dist/WatermarkRemover-linux
+          ls
+          ls ./dist
+          echo "adding permission ..."
+          chmod +x ./dist/WatermarkRemover-linux
+          echo "running ./test_scripts/run_unix.sh ..."
+          ./test_scripts/run_unix.sh -e "./dist/WatermarkRemover-linux" -t 15; echo $?
+          echo "done"
