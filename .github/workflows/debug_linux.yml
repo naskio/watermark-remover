@@ -43,17 +43,11 @@ jobs:
         run: |
           python scripts/build.py
 
-      #      - name: Setup xvfb (GUI for Linux)
-      #        if: runner.os == 'Linux'
-      #        run: |
-      #          sudo apt-get install -y xvfb libxkbcommon-x11-0 libxcb-icccm4 libxcb-image0 libxcb-keysyms1 libxcb-randr0 libxcb-render-util0 libxcb-xinerama0 libxcb-xinput0 libxcb-xfixes0
-      #          # start xvfb on (default) display :0
-      #          sudo /usr/bin/Xvfb $DISPLAY -screen 0 1280x1024x24 &
-
-      - name: Install GUI dependencies
+      - name: Install and launch xvfb (ubuntu GUI)
         if: runner.os == 'Linux'
         run: |
-          sudo apt-get install x11-apps
+          sudo apt-get install -y xvfb libxkbcommon-x11-0 libxcb-icccm4 libxcb-image0 libxcb-keysyms1 libxcb-randr0 libxcb-render-util0 libxcb-xinerama0 libxcb-xinput0 libxcb-xfixes0
+          sudo /usr/bin/Xvfb $DISPLAY -screen 0 1280x1024x24 & # start xvfb on (default) display :0
 
       - name: Rename, run and test
         if: runner.os == 'Linux'
