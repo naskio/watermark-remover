@@ -43,6 +43,11 @@ jobs:
         run: |
           python scripts/build.py
 
+      - name: Install GUI dependencies
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get install x11-apps
+
       - name: Rename, run and test
         if: runner.os == 'Linux'
         run: |
@@ -59,4 +64,4 @@ jobs:
           ./test_scripts/run_unix.sh -e "./dist/WatermarkRemover-linux" -t ${{ github.event.inputs.timeout }}; echo $?
           echo "done"
         env:
-          DISPLAY: 0.0
+          DISPLAY: "0.0"
