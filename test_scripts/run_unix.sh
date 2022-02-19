@@ -57,6 +57,11 @@ status=$?
 if [ $status -eq 124 ] || [ $status -eq 137 ] || [ $status -eq 9 ]
 then
   echo "Success: timeout $timeout seconds has been reached with exit code: $status"
+  if [ "$app" ]; then
+    appname="$(basename -- $app)"
+    echo "Closing app: $appname"
+    osascript -e "quit app \"$appname\""
+  fi
   exit 0
 else
   echo "Failed: exit code: $status"
