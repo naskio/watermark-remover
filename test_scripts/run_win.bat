@@ -11,8 +11,8 @@ dir
 @REM echo Starting %EXECUTABLE%...
 @REM START "" %EXECUTABLE%
 
-echo Waiting for %TIMEOUT% seconds..
-timeout /T %TIMEOUT% /NOBREAK > NUL
+@REM echo Waiting for %TIMEOUT% seconds..
+@REM timeout /T %TIMEOUT% /NOBREAK > NUL
 
 tasklist /fi "ImageName eq %FILENAME%" /fo csv 2>NUL | find /I "%FILENAME%"> NUL
 echo ERROR LEVEL is %ERRORLEVEL%

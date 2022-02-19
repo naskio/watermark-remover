@@ -43,13 +43,26 @@ jobs:
         run: |
           python scripts/build.py
 
-      - name: Rename + Test .exe
+      - name: Rename .exe + run .exe
         run: |
-          dir
-          ren .\dist\WatermarkRemover-wind32-${{ steps.get_version.outputs.VERSION }}.exe .\dist\WatermarkRemover.exe
-          echo starting .\dist\WatermarkRemover.exe ...
-          .\dist\WatermarkRemover.exe
+          Get-ChildItem
+          Get-ChildItem -Path ".\dist"
+          Rename-Item -Path ".\dist\WatermarkRemover-wind32-${{ steps.get_version.outputs.VERSION }}.exe" -NewName "WatermarkRemover.exe"
+          Get-ChildItem
+          Get-ChildItem -Path ".\dist"
+          Write-Host "starting .\dist\WatermarkRemover.exe ..."
+          Start-Process -FilePath ".\dist\WatermarkRemover.exe"
           echo starting test script...
-          .\test_scripts\run_win.bat .\dist\WatermarkRemover.exe 30
-          echo Test result: %ERRORLEVEL%
-        shell: cmd
+          Start-Sleep -s 30
+          Start-Process -FilePath ".\test_scripts\run_win.bat" -ArgumentList .\dist\WatermarkRemover.exe 30
+          Write-Host "Result: $?"
+          Write-Host "Last exit code: $LastExitCode"
+        shell: powershell
+#        continue-on-error: true
+
+#      - name: Test .exe
+#        run: |
+#          echo starting test script...
+#          .\test_scripts\run_win.bat .\dist\WatermarkRemover.exe 30
+#          echo Test result: %ERRORLEVEL%
+#        shell: cmd
