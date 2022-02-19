@@ -76,7 +76,7 @@ else
     exit 1 # force failure
   elif [ "$executable" ]
   then
-    fiecho "Failed => The script has crashed with code $status."
+    echo "Failed => The script has crashed with code $status."
     exit $status # preserve exit status
   else
     exit 1 # force failure

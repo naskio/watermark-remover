@@ -26,6 +26,8 @@ echo ERROR LEVEL is %ERRORLEVEL%.
 
 IF %ERRORLEVEL% NEQ 0 (
    echo Program %FILENAME% is not running.
+   echo Re-running %FILENAME% to get error code...
+   START /WAIT %EXECUTABLE%
    echo Trying to quit %FILENAME% even if not running...
    taskkill /f /im %FILENAME%
    echo Failed: EXE failed with code %ERRORLEVEL% .
