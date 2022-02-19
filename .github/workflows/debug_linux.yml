@@ -58,3 +58,5 @@ jobs:
           echo "running ./test_scripts/run_unix.sh ..."
           ./test_scripts/run_unix.sh -e "./dist/WatermarkRemover-linux" -t ${{ github.event.inputs.timeout }}; echo $?
           echo "done"
+        env:
+          DISPLAY: 0.0

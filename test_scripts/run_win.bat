@@ -16,8 +16,9 @@ IF NOT EXIST %EXECUTABLE% (
 START "" %EXECUTABLE%
 
 echo Waiting for %TIMEOUT% seconds..
-timeout /T %TIMEOUT% /NOBREAK > NUL
+timeout /T %TIMEOUT% /NOBREAK
 
+echo Checking if %FILENAME% is still running...
 tasklist /fi "ImageName eq %FILENAME%" /fo csv 2>NUL | find /I "%FILENAME%"> NUL
 echo ERROR LEVEL is %ERRORLEVEL%
 
