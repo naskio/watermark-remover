@@ -16,7 +16,9 @@ IF NOT EXIST %EXECUTABLE% (
 START "" %EXECUTABLE%
 
 echo Waiting for %TIMEOUT% seconds..
+echo Started waiting at %TIME%
 ping 127.0.0.1 -n %TIMEOUT% > NUL
+echo Wait finished at %TIME%
 
 echo Checking if %FILENAME% is still running...
 tasklist /fi "ImageName eq %FILENAME%" /fo csv 2>NUL | find /I "%FILENAME%"> NUL

@@ -43,6 +43,13 @@ jobs:
         run: |
           python scripts/build.py
 
+      #      - name: Setup xvfb (GUI for Linux)
+      #        if: runner.os == 'Linux'
+      #        run: |
+      #          sudo apt-get install -y xvfb libxkbcommon-x11-0 libxcb-icccm4 libxcb-image0 libxcb-keysyms1 libxcb-randr0 libxcb-render-util0 libxcb-xinerama0 libxcb-xinput0 libxcb-xfixes0
+      #          # start xvfb on (default) display :0
+      #          sudo /usr/bin/Xvfb $DISPLAY -screen 0 1280x1024x24 &
+
       - name: Install GUI dependencies
         if: runner.os == 'Linux'
         run: |
@@ -64,4 +71,4 @@ jobs:
           ./test_scripts/run_unix.sh -e "./dist/WatermarkRemover-linux" -t ${{ github.event.inputs.timeout }}; echo $?
           echo "done"
         env:
-          DISPLAY: "0.0"
+          DISPLAY: ":0"
