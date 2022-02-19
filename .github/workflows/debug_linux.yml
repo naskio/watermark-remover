@@ -8,6 +8,11 @@ on:
         required: true
         default: '0.4.1'
         type: string
+      timeout:
+        description: 'timeout in seconds'
+        required: true
+        default: '60'
+        type: string
 
 jobs:
   debug_job:
@@ -51,5 +56,5 @@ jobs:
           echo "adding permission ..."
           chmod +x ./dist/WatermarkRemover-linux
           echo "running ./test_scripts/run_unix.sh ..."
-          ./test_scripts/run_unix.sh -e "./dist/WatermarkRemover-linux" -t 15; echo $?
+          ./test_scripts/run_unix.sh -e "./dist/WatermarkRemover-linux" -t ${{ github.event.inputs.timeout }}; echo $?
           echo "done"

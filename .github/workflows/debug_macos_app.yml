@@ -8,6 +8,11 @@ on:
         required: true
         default: '0.4.1'
         type: string
+      timeout:
+        description: 'timeout in seconds'
+        required: true
+        default: '60'
+        type: string
 
 jobs:
   debug_job:
@@ -41,7 +46,7 @@ jobs:
       - run: brew install coreutils
         if: runner.os == 'macOS'
 
-      - name: Rename, run and test
+      - name: Rename, run and test (.app bundle)
         if: runner.os == 'macOS'
         run: |
           ls
@@ -54,5 +59,5 @@ jobs:
           echo "adding permission ..."
           chmod +x ./dist/WatermarkRemover.app/Contents/MacOS/WatermarkRemover-macos-${{ github.event.inputs.version }}
           echo "running ./test_scripts/run_unix.sh ..."
-          ./test_scripts/run_unix.sh -a "./dist/WatermarkRemover.app/" -t 30; echo $?
+          ./test_scripts/run_unix.sh -a "./dist/WatermarkRemover.app/" -t ${{ github.event.inputs.timeout }}; echo $?
           echo "done"

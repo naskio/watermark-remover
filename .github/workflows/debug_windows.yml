@@ -8,6 +8,11 @@ on:
         required: true
         default: '0.4.1'
         type: string
+      timeout:
+        description: 'timeout in seconds'
+        required: true
+        default: '60'
+        type: string
 
 jobs:
   debug_job:
@@ -48,7 +53,7 @@ jobs:
           DIR
           DIR .\dist
           ECHO running .\test_scripts\run_win.bat ...
-          .\test_scripts\run_win.bat .\dist\WatermarkRemover.exe 30
-          ECHO Test result: %ERRORLEVEL%
+          .\test_scripts\run_win.bat .\dist\WatermarkRemover.exe ${{ github.event.inputs.timeout }}
+          ECHO %ERRORLEVEL%
           ECHO done
         shell: cmd
