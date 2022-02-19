@@ -8,11 +8,15 @@ echo executable is %EXECUTABLE%
 echo filename is %FILENAME%
 dir
 
-@REM echo Starting %EXECUTABLE%...
-@REM START "" %EXECUTABLE%
+echo Starting %EXECUTABLE%...
+IF NOT EXIST %EXECUTABLE% (
+    echo %EXECUTABLE% is missing
+    exit 1
+)
+START "" %EXECUTABLE%
 
-@REM echo Waiting for %TIMEOUT% seconds..
-@REM timeout /T %TIMEOUT% /NOBREAK > NUL
+echo Waiting for %TIMEOUT% seconds..
+timeout /T %TIMEOUT% /NOBREAK > NUL
 
 tasklist /fi "ImageName eq %FILENAME%" /fo csv 2>NUL | find /I "%FILENAME%"> NUL
 echo ERROR LEVEL is %ERRORLEVEL%
