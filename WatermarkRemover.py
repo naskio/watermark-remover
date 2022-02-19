@@ -5,6 +5,7 @@ from main import main, generate_output_path, MethodChoice
 from scripts.version import __version__
 from typing import Optional
 import darkdetect
+import sys
 
 BASE_DIR = Path(__file__).parent
 DEFAULT_DIR = Path.home() / 'Desktop'
@@ -103,19 +104,22 @@ def get_output_dir(base_dir: Path) -> Optional[str]:
         return str(_dir)
 
 
+# theming
+LOAD_THEME_DYNAMIC = False
+RAISE_THEME_EXCEPTION = True
+
 try:
     ws = Tk()
-    # ws.tk.call("source", "azure.tcl")
     # setting theme
     try:
         THEME_FOLDER = BASE_DIR / 'resources' / 'azure'
-        THEME_FILE = THEME_FOLDER / 'azure.tcl'
-        with open(THEME_FILE, 'r', encoding="utf-8") as f:
-            lines = f"""source {THEME_FOLDER / 'theme' / 'light.tcl'}
-source {THEME_FOLDER / 'theme' / 'dark.tcl'}
-        """
-            lines += f.read()
-            ws.tk.eval(lines)
+        if LOAD_THEME_DYNAMIC:
+            with open(THEME_FOLDER / 'azure_alt.tcl', 'r', encoding="utf-8") as f:
+                lines = f"source {THEME_FOLDER / 'theme' / 'light.tcl'}\nsource {THEME_FOLDER / 'theme' / 'dark.tcl'}\n"
+                lines += f.read()
+                ws.tk.eval(lines)
+        else:
+            ws.tk.call("source", THEME_FOLDER / "azure.tcl")
         if darkdetect and darkdetect.isDark():
             ws.tk.call("set_theme", "dark")
         else:
@@ -123,8 +127,8 @@ source {THEME_FOLDER / 'theme' / 'dark.tcl'}
     except Exception as e:
         print(e)
         print("Theme not loaded")
-        raise e
-        # ws['bg'] = 'gray'
+        if RAISE_THEME_EXCEPTION:
+            raise e
 
     ws.title(f"Watermark Remover v{__version__} - by [www.nask.io]")
     # ws.resizable(False, False)
@@ -137,6 +141,7 @@ source {THEME_FOLDER / 'theme' / 'dark.tcl'}
     y_coordinate = int((screen_height / 2) - (window_height / 2))
     ws.geometry(f"{window_width}x{window_height}+{x_coordinate}+{y_coordinate}")
     # ws.geometry("694x600")
+    # ws['bg'] = 'gray'
 
     log_txt_area = Text(
         ws, width=60, height=30, state=DISABLED,
@@ -169,4 +174,4 @@ source {THEME_FOLDER / 'theme' / 'dark.tcl'}
 except Exception as e:
     print("Unhandled exception")
     print(e)
-    exit(1)
+    sys.exit(1)
