@@ -56,9 +56,10 @@ jobs:
           Get-ChildItem -Path ".\dist"
           Write-Host "starting .\dist\WatermarkRemover.exe ..."
           Start-Process -FilePath ".\dist\WatermarkRemover.exe"
-          echo starting test script...
+          Write-Host "Waiting for 30s..."
           Start-Sleep -s 30
-          Start-Process -FilePath ".\test_scripts\run_win.bat" -ArgumentList .\dist\WatermarkRemover.exe 30
+          Write-Host "Starting run_win.bat ..."
+          Start-Process -FilePath ".\test_scripts\run_win.bat" -ArgumentList {".\dist\WatermarkRemover.exe"; "30";}
           Write-Host "Result: $?"
           Write-Host "Last exit code: $LastExitCode"
         shell: powershell
