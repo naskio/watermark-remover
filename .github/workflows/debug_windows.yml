@@ -43,37 +43,15 @@ jobs:
         run: |
           python scripts/build.py
 
-      #      - name: Rename .exe + run .exe
-      #        run: |
-      #          Write-Host "Current directory:"
-      #          Get-ChildItem
-      #          Write-Host ".\dist directory:"
-      #          Get-ChildItem -Path ".\dist"
-      #          Rename-Item -Path ".\dist\WatermarkRemover-wind32-${{ github.event.inputs.version }}.exe" -NewName "WatermarkRemover.exe"
-      #          Write-Host "Current directory:"
-      #          Get-ChildItem
-      #          Write-Host ".\dist directory:"
-      #          Get-ChildItem -Path ".\dist"
-      #          Write-Host "starting .\dist\WatermarkRemover.exe ..."
-      #          Start-Process -FilePath ".\dist\WatermarkRemover.exe"
-      #          Write-Host "Waiting for 30s..."
-      #          Start-Sleep -s 30
-      #          Write-Host "Starting run_win.bat ..."
-      #          Start-Process -FilePath ".\test_scripts\run_win.bat" -ArgumentList {".\dist\WatermarkRemover.exe"; "30";} -Wait
-      #          Write-Host "Result: $?"
-      #          Write-Host "Last exit code: $LastExitCode"
-      #        shell: powershell
-      #        continue-on-error: true
-
-      - name: Test .exe
+      - name: Rename, run and test .exe
         run: |
-          dir
-          dir .\dist
-          echo renaming .exe ...
-          ren .\dist\WatermarkRemover-wind32-${{ github.event.inputs.version }}.exe .\dist\WatermarkRemover.exe
-          dir
-          dir .\dist
-          echo running .\test_scripts\run_win.bat ...
+          DIR
+          DIR .\dist
+          ECHO renaming .exe ...
+          REN .\dist\WatermarkRemover-wind32-${{ github.event.inputs.version }}.exe "WatermarkRemover.exe"
+          DIR
+          DIR .\dist
+          ECHO running .\test_scripts\run_win.bat ...
           .\test_scripts\run_win.bat .\dist\WatermarkRemover.exe 30
-          echo Test result: %ERRORLEVEL%
+          ECHO Test result: %ERRORLEVEL%
         shell: cmd
