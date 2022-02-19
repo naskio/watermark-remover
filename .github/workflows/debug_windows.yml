@@ -47,7 +47,7 @@ jobs:
         run: |
           Get-ChildItem
           Get-ChildItem -Path ".\dist"
-          Rename-Item -Path ".\dist\WatermarkRemover-wind32-${{ steps.get_version.outputs.VERSION }}.exe" -NewName "WatermarkRemover.exe"
+          Rename-Item -Path ".\dist\WatermarkRemover-wind32-${{ github.event.inputs.version }}.exe" -NewName "WatermarkRemover.exe"
           Get-ChildItem
           Get-ChildItem -Path ".\dist"
           Write-Host "starting .\dist\WatermarkRemover.exe ..."
