@@ -23,19 +23,20 @@ done
 # set default timeout
 if [ -z "$timeout" ]; then
    timeout=60
+   echo "No timeout specified, using default timeout of $timeout seconds"
 fi
 
 # Print helpFunction in case parameters both empty
 if [ -z "$app" ] && [ -z "$executable" ]
 then
-   echo "Only one parameter should be set"
+   echo "Only one parameter should be set, but none are set"
    helpFunction
 fi
 
 # Print helpFunction in case parameters are empty
 if [ "$app" ] && [ "$executable" ]
 then
-   echo "Only one parameter should be set"
+   echo "Only one parameter should be set, but both are set"
    helpFunction
 fi
 
@@ -55,10 +56,10 @@ status=$?
 # Check if script and app were run
 if [ $status -eq 124 ] || [ $status -eq 137 ] || [ $status -eq 9 ]
 then
-  echo "Timeout $timeout seconds has been reached with exit code: $status => Success"
+  echo "Success: timeout $timeout seconds has been reached with exit code: $status"
   exit 0
 else
-  echo "Exit code: $status => Failure"
+  echo "Failed: exit code: $status"
 #  exit $status # preserve exit status
   exit 1 # force failure
 fi

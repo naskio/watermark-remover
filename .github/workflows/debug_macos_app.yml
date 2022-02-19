@@ -38,6 +38,9 @@ jobs:
         run: |
           python scripts/build.py
 
+      - run: brew install coreutils
+        if: runner.os == 'macOS'
+
       - name: Rename, run and test
         if: runner.os == 'macOS'
         run: |
