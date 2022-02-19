@@ -43,8 +43,9 @@ jobs:
         run: |
           python scripts/build.py
 
-      - run: brew install coreutils
+      - name: Install coreutils (timeout cmd needs this)
         if: runner.os == 'macOS'
+        run: brew install coreutils
 
       - name: Rename, run and test
         if: runner.os == 'macOS'
