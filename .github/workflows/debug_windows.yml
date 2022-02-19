@@ -47,7 +47,9 @@ jobs:
         run: |
           dir
           ren .\dist\WatermarkRemover-wind32-${{ steps.get_version.outputs.VERSION }}.exe .\dist\WatermarkRemover.exe
+          echo starting .\dist\WatermarkRemover.exe ...
+          .\dist\WatermarkRemover.exe
+          echo starting test script...
           .\test_scripts\run_win.bat .\dist\WatermarkRemover.exe 30
           echo Test result: %ERRORLEVEL%
         shell: cmd
-        #          cmd /c ".\test_scripts\run_win.bat .\dist\WatermarkRemover.exe 30"
