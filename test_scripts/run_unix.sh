@@ -70,10 +70,12 @@ then
   fi
   exit 0
 else
-  if [ "$app" ]; then
+  if [ "$app" ]
+  then
     echo "Failed => The .app has crashed."
     exit 1 # force failure
-  else if [ "$executable" ]; then
+  elif [ "$executable" ]
+  then
     fiecho "Failed => The script has crashed with code $status."
     exit $status # preserve exit status
   else
