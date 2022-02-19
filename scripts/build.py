@@ -38,6 +38,7 @@ PyInstaller.__main__.run([
     '--clean',
     '--log-level=WARN',
     f'--name={name}-{_os}-{__version__}',
+    # without this the theme azure will not be found and the app crashes here: ws.tk.call("source", "azure.tcl")
     f'--add-data={BASE_DIR / "resources" / "azure"}{_add_data_separator}{os.path.join("resources", "azure")}',
     '-y'
 ])
