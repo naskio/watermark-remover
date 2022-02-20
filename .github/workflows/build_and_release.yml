@@ -36,6 +36,12 @@ jobs:
       - name: Build app
         run: |
           python build.py --version ${{ steps.get_version.outputs.VERSION }} --nodebug
+        if: runner.os == 'Linux' || runner.os == 'Windows'
+
+      - name: Build app (dirmode)
+        run: |
+          python build.py --version ${{ steps.get_version.outputs.VERSION }} --nodebug --dirmode
+        if: runner.os == 'macOS' || runner.os == 'Windows'
 
       - name: Linux - install and launch xvfb (GUI on Linux)
         if: runner.os == 'Linux'
@@ -64,20 +70,20 @@ jobs:
         if: runner.os == 'macOS'
         run: brew install coreutils
 
-      - name: macOS - Rename, repair and test run (CLI)
-        if: runner.os == 'macOS'
-        run: |
-          ls
-          ls ./dist
-          echo "renaming ..."
-          mv ./dist/WatermarkRemover ./dist/WatermarkRemover-macos
-          ls
-          ls ./dist
-          echo "adding permission ..."
-          chmod +x ./dist/WatermarkRemover-macos
-          echo "running ./scripts/run_unix.sh ..."
-          ./scripts/run_unix.sh -e "./dist/WatermarkRemover-macos" -t 45; echo $?
-          echo "done"
+      #      - name: macOS - Rename, repair and test run (CLI)
+      #        if: runner.os == 'macOS'
+      #        run: |
+      #          ls
+      #          ls ./dist
+      #          echo "renaming ..."
+      #          mv ./dist/WatermarkRemover ./dist/WatermarkRemover-macos
+      #          ls
+      #          ls ./dist
+      #          echo "adding permission ..."
+      #          chmod +x ./dist/WatermarkRemover-macos
+      #          echo "running ./scripts/run_unix.sh ..."
+      #          ./scripts/run_unix.sh -e "./dist/WatermarkRemover-macos" -t 30; echo $?
+      #          echo "done"
 
       - name: macOS - Rename, repair and test run (.app bundle)
         if: runner.os == 'macOS'
@@ -87,7 +93,7 @@ jobs:
           echo "adding permission ..."
           chmod +x ./dist/WatermarkRemover.app/Contents/MacOS/WatermarkRemover
           echo "running ./scripts/run_unix.sh ..."
-          ./scripts/run_unix.sh -a "./dist/WatermarkRemover.app/" -t 45; echo $?
+          ./scripts/run_unix.sh -a "./dist/WatermarkRemover.app/" -t 30; echo $?
           echo "done"
 
       - name: Windows - Rename, repair and test run (.exe)
@@ -96,10 +102,20 @@ jobs:
           DIR
           DIR .\dist
           ECHO running .\scripts\run_win.bat ...
-          .\scripts\run_win.bat .\dist\WatermarkRemover.exe 45
+          .\scripts\run_win.bat .\dist\WatermarkRemover.exe 30
           ECHO %ERRORLEVEL%
           ECHO done
         shell: cmd
+
+      - name: Create installer (using NSIS)
+        uses: joncloud/makensis-action@v3.3
+        with:
+          script-file: installer.nsi
+        if: runner.os == 'Windows'
+
+      - name: Move installer to dist folder
+        run: mv WatermarkRemover-installer.exe dist/WatermarkRemover-installer.exe
+        if: runner.os == 'Windows'
 
       - name: Upload Artifacts
         uses: actions/upload-artifact@v2
