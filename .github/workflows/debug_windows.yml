@@ -49,12 +49,8 @@ jobs:
           DIR
           DIR .\dist
           DIR .\dist\WatermarkRemover
-          @REM ECHO renaming .exe ...
-          @REM REN .\dist\WatermarkRemover-wind32-${{ github.event.inputs.version }}.exe "WatermarkRemover.exe"
-          @REM DIR
-          @REM DIR .\dist
           ECHO running .\scripts\run_win.bat ...
-          .\scripts\run_win.bat .\dist\WatermarkRemover.exe ${{ github.event.inputs.timeout }}
+          .\scripts\run_win.bat .\dist\WatermarkRemover\WatermarkRemover.exe ${{ github.event.inputs.timeout }}
           ECHO %ERRORLEVEL%
           ECHO done
         shell: cmd

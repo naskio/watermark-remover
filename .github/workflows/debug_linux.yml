@@ -53,12 +53,17 @@ jobs:
         if: runner.os == 'Linux'
         run: |
           ls
+          echo "----------------------------------------"
           ls ./dist
+          echo "----------------------------------------"
           # chmod +x ./scripts/run_unix.sh
           echo "renaming ..."
           mv ./dist/WatermarkRemover ./dist/WatermarkRemover-linux
+          echo "----------------------------------------"
           ls
+          echo "----------------------------------------"
           ls ./dist
+          echo "----------------------------------------"
           echo "adding permission ..."
           chmod +x ./dist/WatermarkRemover-linux
           echo "running ./scripts/run_unix.sh ..."

@@ -51,8 +51,11 @@ jobs:
         if: runner.os == 'macOS'
         run: |
           ls
+          echo "----------------------------------------"
           ls ./dist
-          ls ./dist/WatermarkRemover || true
+          echo "----------------------------------------"
+          ls ./dist/WatermarkRemover
+          echo "----------------------------------------"
           echo "adding permission ..."
           chmod +x ./dist/WatermarkRemover.app/Contents/MacOS/WatermarkRemover
           echo "running ./scripts/run_unix.sh ..."
