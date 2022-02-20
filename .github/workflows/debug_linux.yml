@@ -64,5 +64,5 @@ jobs:
           echo "running ./test_scripts/run_unix.sh ..."
           ./test_scripts/run_unix.sh -e "./dist/WatermarkRemover-linux" -t ${{ github.event.inputs.timeout }}; echo $?
           echo "done"
-        env:
-          DISPLAY: ":0" # set DISPLAY to :0 to run on (default) display
+        # env:
+        #  DISPLAY: ":0" # set DISPLAY to :0 to run on (default) display
