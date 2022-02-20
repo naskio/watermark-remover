@@ -8,10 +8,10 @@ Contributions are welcome!
 
 1. Install python 3.7 or later
 2. Install requirements
-    ```shell
-    python -m pip install --upgrade pip wheel setuptools
-    python -m pip install -r requirements.txt
-    ```
+   ```shell
+   python -m pip install --upgrade pip wheel setuptools
+   python -m pip install -r requirements.txt
+   ```
 
 3. Install os dependencies of [pikepdf](https://pikepdf.readthedocs.io/en/latest/)
    , [Pillow](https://pillow.readthedocs.io/en/stable/), etc. (check `requirements.txt`)
@@ -22,23 +22,42 @@ Contributions are welcome!
 
 Generate builds:
 
-1. using `scripts/build.py`
+1. Create and configure env variables (`.env` file)
    ```shell
-   python scripts/build.py
+   cp .env.example .env
    ```
 
-2. or Using [pyinstaller](https://pyinstaller.readthedocs.io/en/stable/index.html)
+2. Load env variables
+   ```shell
+   source .env
+   ECHO $VERSION
+   ECHO $DEBUG
+   ```
+
+3. using `build.py` script
+   ```shell
+   python3 build.py --version $VERSION --debug $DEBUG
+   ```
+
+4. or Using [pyinstaller](https://pyinstaller.readthedocs.io/en/stable/index.html)
    ```shell
    pyinstaller --onefile --windowed --icon=<project-logo>.ico --add-data "<folder>;<folder>" <filename.py>
    pyinstaller --onefile --windowed WaterMarkRemover.py
    ```
 
-You will find a directory named `dist` with the executable file `WaterMarkRemover.exe` or `WaterMarkRemover`
+You will find a directory named `dist` with the executable file `WaterMarkRemover.exe`, `WaterMarkRemover`
+or `WaterMarkRemover.app`.
 
 to run the app on macOS:
 
-```
+```shell
 open -n WatermarkRemover.app
+```
+
+## Build and Test the application locally
+
+```shell
+./test_build.local.sh 35
 ```
 
 --------------------------------------------------------------------------------
@@ -47,7 +66,7 @@ open -n WatermarkRemover.app
 
 To release a new version of the project you need to:
 
-- Change version in file ```scripts/version.py```.
+- Change version in the env file `.env`.
 - Commit the changes and push.
 - Create a new tag locally.
 - Push the new tag to the remote.
@@ -57,14 +76,18 @@ To release a new version of the project you need to:
 You can create a release using the following command:
 
 ```shell
-git push; VERSION="0.4.0"; MESSAGE="v0.4.0"; git tag $VERSION -a -m $MESSAGE; git push origin $VERSION
+source .env; git push; git tag $VERSION -a -m "v$VERSION"; git push origin $VERSION
+# or
+git push; VERSION="0.1.0"; MESSAGE="v$VERSION"; git tag $VERSION -a -m $MESSAGE; git push origin $VERSION
 ```
 
 ## Cancel release
 
 - Remove the tag from local and remote
   ```shell
-  VERSION="0.4.0"; git tag --delete $VERSION; git push --delete origin $VERSION
+  source .env; git tag --delete $VERSION; git push --delete origin $VERSION
+  # or
+  VERSION="0.1.0"; git tag --delete $VERSION; git push --delete origin $VERSION
   ```
 
 - Delete release from [GitHub](https://github.com/naskio/watermark-remover/releases/).

@@ -6,7 +6,7 @@ on:
       version:
         description: 'version'
         required: true
-        default: '0.4.1'
+        default: '0.1.0'
         type: string
       timeout:
         description: 'timeout in seconds'
@@ -41,7 +41,7 @@ jobs:
 
       - name: Build
         run: |
-          python scripts/build.py
+          python build.py --version ${{ github.event.inputs.version }} --nodebug
 
       - name: Install and launch xvfb (GUI on Linux)
         if: runner.os == 'Linux'
@@ -54,15 +54,15 @@ jobs:
         run: |
           ls
           ls ./dist
-          # chmod +x ./test_scripts/run_unix.sh
+          # chmod +x ./scripts/run_unix.sh
           echo "renaming ..."
-          mv ./dist/WatermarkRemover-linux-${{ github.event.inputs.version }} ./dist/WatermarkRemover-linux
+          mv ./dist/WatermarkRemover ./dist/WatermarkRemover-linux
           ls
           ls ./dist
           echo "adding permission ..."
           chmod +x ./dist/WatermarkRemover-linux
-          echo "running ./test_scripts/run_unix.sh ..."
-          ./test_scripts/run_unix.sh -e "./dist/WatermarkRemover-linux" -t ${{ github.event.inputs.timeout }}; echo $?
+          echo "running ./scripts/run_unix.sh ..."
+          ./scripts/run_unix.sh -e "./dist/WatermarkRemover-linux" -t ${{ github.event.inputs.timeout }}; echo $?
           echo "done"
         # env:
         #  DISPLAY: ":0" # set DISPLAY to :0 to run on (default) display

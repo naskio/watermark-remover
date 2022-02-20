@@ -6,7 +6,7 @@ on:
       version:
         description: 'version'
         required: true
-        default: '0.4.1'
+        default: '0.1.0'
         type: string
       timeout:
         description: 'timeout in seconds'
@@ -41,7 +41,7 @@ jobs:
 
       - name: Build
         run: |
-          python scripts/build.py
+          python build.py --version ${{ github.event.inputs.version }} --nodebug
 
       - name: Install coreutils (timeout cmd needs this)
         if: runner.os == 'macOS'
@@ -52,13 +52,13 @@ jobs:
         run: |
           ls
           ls ./dist
-          # chmod +x ./test_scripts/run_unix.sh
-          echo "renaming ..."
-          mv ./dist/WatermarkRemover-macos-${{ github.event.inputs.version }}.app ./dist/WatermarkRemover.app
-          ls
-          ls ./dist
+          # chmod +x ./scripts/run_unix.sh
+          # echo "renaming ..."
+          # mv ./dist/WatermarkRemover-macos-${{ github.event.inputs.version }}.app ./dist/WatermarkRemover.app
+          # ls
+          # ls ./dist
           echo "adding permission ..."
-          chmod +x ./dist/WatermarkRemover.app/Contents/MacOS/WatermarkRemover-macos-${{ github.event.inputs.version }}
-          echo "running ./test_scripts/run_unix.sh ..."
-          ./test_scripts/run_unix.sh -a "./dist/WatermarkRemover.app/" -t ${{ github.event.inputs.timeout }}; echo $?
+          chmod +x ./dist/WatermarkRemover.app/Contents/MacOS/WatermarkRemover
+          echo "running ./scripts/run_unix.sh ..."
+          ./scripts/run_unix.sh -a "./dist/WatermarkRemover.app/" -t ${{ github.event.inputs.timeout }}; echo $?
           echo "done"

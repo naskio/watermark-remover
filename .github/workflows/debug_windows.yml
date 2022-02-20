@@ -6,7 +6,7 @@ on:
       version:
         description: 'version'
         required: true
-        default: '0.4.1'
+        default: '0.1.0'
         type: string
       timeout:
         description: 'timeout in seconds'
@@ -41,19 +41,19 @@ jobs:
 
       - name: Build
         run: |
-          python scripts/build.py
+          python build.py --version ${{ github.event.inputs.version }} --nodebug
 
       - name: Rename, run and test .exe
         if: runner.os == 'Windows'
         run: |
           DIR
           DIR .\dist
-          ECHO renaming .exe ...
-          REN .\dist\WatermarkRemover-wind32-${{ github.event.inputs.version }}.exe "WatermarkRemover.exe"
-          DIR
-          DIR .\dist
-          ECHO running .\test_scripts\run_win.bat ...
-          .\test_scripts\run_win.bat .\dist\WatermarkRemover.exe ${{ github.event.inputs.timeout }}
+          @REM ECHO renaming .exe ...
+          @REM REN .\dist\WatermarkRemover-wind32-${{ github.event.inputs.version }}.exe "WatermarkRemover.exe"
+          @REM DIR
+          @REM DIR .\dist
+          ECHO running .\scripts\run_win.bat ...
+          .\scripts\run_win.bat .\dist\WatermarkRemover.exe ${{ github.event.inputs.timeout }}
           ECHO %ERRORLEVEL%
           ECHO done
         shell: cmd

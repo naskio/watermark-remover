@@ -1,4 +1,4 @@
-name: Build and Release
+name: Build, Test and Release
 
 on:
   push:
@@ -6,21 +6,24 @@ on:
       - "*.*.*"
 
 jobs:
-  build:
-    name: Build
+  build_and_test:
+    name: Build and Test
     runs-on: ${{ matrix.os }}
+    timeout-minutes: 15
     strategy:
-      #      fail-fast: false
       matrix:
         os: [ ubuntu-latest, windows-latest, macos-latest ]
     steps:
       - uses: actions/checkout@v2
 
+      - name: Get the version # get the version from the tag
+        id: get_version
+        run: echo ::set-output name=VERSION::${GITHUB_REF#refs/tags/}
+
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v2
         with:
-          python-version: '3.10'
-          #          python-version: 3.7
+          python-version: '3.10' # python version used for build
           cache: 'pip'
       - name: Upgrade pip
         run: |
@@ -30,9 +33,71 @@ jobs:
         run: |
           python -m pip install -r requirements.txt
 
-      - name: Build
+      - name: Build app
         run: |
-          python scripts/build.py
+          python build.py --version ${{ steps.get_version.outputs.VERSION }} --nodebug
+
+      - name: Linux - install and launch xvfb (GUI on Linux)
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get install -y xvfb libxkbcommon-x11-0 libxcb-icccm4 libxcb-image0 libxcb-keysyms1 libxcb-randr0 libxcb-render-util0 libxcb-xinerama0 libxcb-xinput0 libxcb-xfixes0
+          sudo /usr/bin/Xvfb $DISPLAY -screen 0 1280x1024x24 & # start xvfb on (default) display :0
+
+      - name: Linux - rename, repair and test run
+        if: runner.os == 'Linux'
+        run: |
+          ls
+          ls ./dist
+          echo "renaming ..."
+          mv ./dist/WatermarkRemover ./dist/WatermarkRemover-linux
+          ls
+          ls ./dist
+          echo "adding permission ..."
+          chmod +x ./dist/WatermarkRemover-linux
+          echo "running ./scripts/run_unix.sh ..."
+          ./scripts/run_unix.sh -e "./dist/WatermarkRemover-linux" -t ${{ github.event.inputs.timeout }}; echo $?
+          echo "done"
+
+      - name: macOS - Install coreutils (for timeout cmd)
+        if: runner.os == 'macOS'
+        run: brew install coreutils
+
+      - name: macOS - Rename, repair and test run (CLI)
+        if: runner.os == 'macOS'
+        run: |
+          ls
+          ls ./dist
+          echo "renaming ..."
+          mv ./dist/WatermarkRemover ./dist/WatermarkRemover-macos
+          ls
+          ls ./dist
+          echo "adding permission ..."
+          chmod +x ./dist/WatermarkRemover-macos
+          echo "running ./scripts/run_unix.sh ..."
+          ./scripts/run_unix.sh -e "./dist/WatermarkRemover-macos" -t ${{ github.event.inputs.timeout }}; echo $?
+          echo "done"
+
+      - name: macOS - Rename, repair and test run (.app bundle)
+        if: runner.os == 'macOS'
+        run: |
+          ls
+          ls ./dist
+          echo "adding permission ..."
+          chmod +x ./dist/WatermarkRemover.app/Contents/MacOS/WatermarkRemover
+          echo "running ./scripts/run_unix.sh ..."
+          ./scripts/run_unix.sh -a "./dist/WatermarkRemover.app/" -t ${{ github.event.inputs.timeout }}; echo $?
+          echo "done"
+
+      - name: Windows - Rename, repair and test run (.exe)
+        if: runner.os == 'Windows'
+        run: |
+          DIR
+          DIR .\dist
+          ECHO running .\scripts\run_win.bat ...
+          .\scripts\run_win.bat .\dist\WatermarkRemover.exe ${{ github.event.inputs.timeout }}
+          ECHO %ERRORLEVEL%
+          ECHO done
+        shell: cmd
 
       - name: Upload Artifacts
         uses: actions/upload-artifact@v2
@@ -41,70 +106,45 @@ jobs:
           path: dist/
 
 
-
   release:
     name: Release
-    needs: [ build ]
+    needs: [ build_and_test ]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2 # get CHANGELOG.md
-      #      - uses: actions/checkout@v2 # get the scripts
-      #      - name: Set up Python ${{ matrix.python-version }} # setup python
-      #        uses: actions/setup-python@v2
-      #        with:
-      #          python-version: 3.7
-      - name: Get the version # get the version from the tag
-        id: get_version
-        run: echo ::set-output name=VERSION::${GITHUB_REF#refs/tags/}
+
       - uses: actions/download-artifact@v2
         with:
           name: ubuntu-latest
           path: ubuntu-latest
+
       - uses: actions/download-artifact@v2
         with:
           name: windows-latest
           path: windows-latest
+
       - uses: actions/download-artifact@v2
         with:
           name: macos-latest
           path: macos-latest
-      - name: Rename the artifacts
-        run: |
-          mv ubuntu-latest/ linux-x86_64-${{ steps.get_version.outputs.VERSION }}/
-          mv windows-latest/ windows-x86_64-${{ steps.get_version.outputs.VERSION }}/
-          mv macos-latest/ macos-x86_64-${{ steps.get_version.outputs.VERSION }}/
-      - name: add permission to macOS artifacts and rename app
-        run: |
-          chmod +x macos-x86_64-${{ steps.get_version.outputs.VERSION }}/WatermarkRemover-macos-${{ steps.get_version.outputs.VERSION }}.app/Contents/MacOS/WatermarkRemover-macos-${{ steps.get_version.outputs.VERSION }}
-          mv macos-x86_64-${{ steps.get_version.outputs.VERSION }}/WatermarkRemover-macos-${{ steps.get_version.outputs.VERSION }}.app macos-x86_64-${{ steps.get_version.outputs.VERSION }}/WatermarkRemover.app
+
       - name: Zip MAC OS app
         uses: montudor/action-zip@v1
         with:
-          args: zip -qq -r WatermarkRemover-macos-${{ steps.get_version.outputs.VERSION }}.zip macos-x86_64-${{ steps.get_version.outputs.VERSION }}/WatermarkRemover.app
-      - name: rename assets
-        run: |
-          mv linux-x86_64-${{ steps.get_version.outputs.VERSION }}/WatermarkRemover-linux-${{ steps.get_version.outputs.VERSION }} linux-x86_64-${{ steps.get_version.outputs.VERSION }}/WatermarkRemover-linux 
-          mv macos-x86_64-${{ steps.get_version.outputs.VERSION }}/WatermarkRemover-macos-${{ steps.get_version.outputs.VERSION }} macos-x86_64-${{ steps.get_version.outputs.VERSION }}/WatermarkRemover-macos-cmd
-          mv windows-x86_64-${{ steps.get_version.outputs.VERSION }}/WatermarkRemover-wind32-${{ steps.get_version.outputs.VERSION }}.exe windows-x86_64-${{ steps.get_version.outputs.VERSION }}/WatermarkRemover.exe
-          mv WatermarkRemover-macos-${{ steps.get_version.outputs.VERSION }}.zip WatermarkRemover-macos.zip
+          args: zip -qq -r WatermarkRemover-macos.zip macos-latest/WatermarkRemover.app
+
       - name: List the files
-        run: ls -l && ls -l linux-x86_64-${{ steps.get_version.outputs.VERSION }}/ && ls -l windows-x86_64-${{ steps.get_version.outputs.VERSION }}/ && ls -l macos-x86_64-${{ steps.get_version.outputs.VERSION }}/
+        run: ls -l && ls -l ubuntu-latest/ && ls -l windows-latest/ && ls -l macos-latest/
+
       - name: create Release
         uses: softprops/action-gh-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          #          body_path: ${{ github.workspace }}/CHANGELOG.md
           body_path: CHANGELOG.md
           files: |
-            linux-x86_64-${{ steps.get_version.outputs.VERSION }}/*
-            windows-x86_64-${{ steps.get_version.outputs.VERSION }}/*
-            macos-x86_64-${{ steps.get_version.outputs.VERSION }}/*
+            ubuntu-latest/*
+            windows-latest/*
+            macos-latest/*
             WatermarkRemover-macos.zip
             LICENSE
-#      - name: Create Release 2
-#        uses: ncipollo/release-action@v1 # breaking changes
-#        with:
-#          artifacts: "release.tar.gz,foo/*.txt"
-#          bodyFile: "body.md"
-#          token: ${{ secrets.GITHUB_TOKEN }}

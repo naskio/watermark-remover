@@ -1,10 +1,9 @@
 #!/bin/bash
 # Build & test locally (unix: bash)
-source .env
-timeout=35
+source ".env"
+timeout=${1:-60} # default timeout 60s
 appname=WatermarkRemover
 platform=macos # or: linux
-
 echo "Building for $platform version $VERSION:"
 echo "cleaning ..."
 python3 build.py --clean --debug $DEBUG
