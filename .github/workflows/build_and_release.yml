@@ -57,6 +57,8 @@ jobs:
           echo "running ./scripts/run_unix.sh ..."
           ./scripts/run_unix.sh -e "./dist/WatermarkRemover-linux" -t ${{ github.event.inputs.timeout }}; echo $?
           echo "done"
+        env:
+          DISPLAY: ":0" # set DISPLAY to :0 to run on (default) display
 
       - name: macOS - Install coreutils (for timeout cmd)
         if: runner.os == 'macOS'
