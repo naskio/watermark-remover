@@ -36,12 +36,11 @@ jobs:
       - name: Build app
         run: |
           python build.py --version ${{ steps.get_version.outputs.VERSION }} --nodebug
-        if: runner.os == 'Linux' || runner.os == 'Windows'
 
       - name: Build app (dirmode)
         run: |
           python build.py --version ${{ steps.get_version.outputs.VERSION }} --nodebug --dirmode
-        if: runner.os == 'macOS' || runner.os == 'Windows'
+        if: runner.os == 'Windows'
 
       - name: Linux - install and launch xvfb (GUI on Linux)
         if: runner.os == 'Linux'
@@ -70,20 +69,20 @@ jobs:
         if: runner.os == 'macOS'
         run: brew install coreutils
 
-      #      - name: macOS - Rename, repair and test run (CLI)
-      #        if: runner.os == 'macOS'
-      #        run: |
-      #          ls
-      #          ls ./dist
-      #          echo "renaming ..."
-      #          mv ./dist/WatermarkRemover ./dist/WatermarkRemover-macos
-      #          ls
-      #          ls ./dist
-      #          echo "adding permission ..."
-      #          chmod +x ./dist/WatermarkRemover-macos
-      #          echo "running ./scripts/run_unix.sh ..."
-      #          ./scripts/run_unix.sh -e "./dist/WatermarkRemover-macos" -t 30; echo $?
-      #          echo "done"
+      - name: macOS - Rename, repair and test run (CLI)
+        if: runner.os == 'macOS'
+        run: |
+          ls
+          ls ./dist
+          echo "renaming ..."
+          mv ./dist/WatermarkRemover ./dist/WatermarkRemover-macos
+          ls
+          ls ./dist
+          echo "adding permission ..."
+          chmod +x ./dist/WatermarkRemover-macos
+          echo "running ./scripts/run_unix.sh ..."
+          ./scripts/run_unix.sh -e "./dist/WatermarkRemover-macos" -t 30; echo $?
+          echo "done"
 
       - name: macOS - Rename, repair and test run (.app bundle)
         if: runner.os == 'macOS'
@@ -149,7 +148,7 @@ jobs:
       - name: Repair (add permissions)
         run: |
           chmod +x ./ubuntu-latest/WatermarkRemover-linux
-          # chmod +x ./macos-latest/WatermarkRemover-macos
+          chmod +x ./macos-latest/WatermarkRemover-macos
           ls ./macos-latest/WatermarkRemover.app/Contents/MacOS/
           chmod +x ./macos-latest/WatermarkRemover.app/Contents/MacOS/WatermarkRemover
 
