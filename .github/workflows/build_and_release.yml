@@ -130,6 +130,12 @@ jobs:
           name: macos-latest
           path: macos-latest
 
+      - name: Repair (add permissions)
+        run: |
+          chmod +x ./ubuntu-latest/WatermarkRemover-linux
+          chmod +x ./ubuntu-latest/WatermarkRemover-macos
+          chmod +x ./macos-latest/WatermarkRemover.app/Contents/MacOS/WatermarkRemover
+
       - name: Zip MAC OS app
         uses: montudor/action-zip@v1
         with:
