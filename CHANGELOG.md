@@ -1,4 +1,4 @@
 # Change Log
 
-- Add main function
-- Removing dynamic theme loading
+- Add NSIS installer
+- reducing wait-time at startup
