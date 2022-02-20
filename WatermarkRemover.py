@@ -2,13 +2,32 @@ from tkinter import Tk, StringVar, END, RIGHT, X, LEFT, Text, DISABLED, NORMAL, 
 from tkinter.ttk import Button, Radiobutton, Label
 from pathlib import Path
 from main import main, generate_output_path, MethodChoice
-from scripts.version import __version__
 from typing import Optional
 import darkdetect
+from environs import Env
+from marshmallow.validate import Regexp
 import sys
 
 BASE_DIR = Path(__file__).parent
 DEFAULT_DIR = Path.home() / 'Desktop'
+ENV_FILE = BASE_DIR / '.env'
+THEME_DIR = BASE_DIR / 'resources' / 'theme'
+
+# We need to create a file at build-time and add it to the bundle of the app and then import it using environs
+env = Env()
+env.read_env(str(ENV_FILE))  # read .env file, if it exists
+DEBUG = env.bool("DEBUG", False)
+VERSION = env.str(
+    "VERSION",
+    validate=Regexp(r"^\d+\.\d+\.\d+$"),
+    default="0.0.0",
+)
+
+# Title of the app
+if VERSION == "0.0.0":
+    title = f"Watermark Remover - by [www.nask.io]"
+else:
+    title = f"Watermark Remover v{VERSION} - by [www.nask.io]"
 
 
 def log_clear():
@@ -112,14 +131,13 @@ try:
     ws = Tk()
     # setting theme
     try:
-        THEME_FOLDER = BASE_DIR / 'resources' / 'azure'
         if LOAD_THEME_DYNAMIC:
-            with open(THEME_FOLDER / 'azure_alt.tcl', 'r', encoding="utf-8") as f:
-                lines = f"source {THEME_FOLDER / 'theme' / 'light.tcl'}\nsource {THEME_FOLDER / 'theme' / 'dark.tcl'}\n"
+            with open(THEME_DIR / 'main_dynamic.tcl', 'r', encoding="utf-8") as f:
+                lines = f"source {THEME_DIR / 'theme' / 'light.tcl'}\nsource {THEME_DIR / 'theme' / 'dark.tcl'}\n"
                 lines += f.read()
                 ws.tk.eval(lines)
         else:
-            ws.tk.call("source", THEME_FOLDER / "azure.tcl")
+            ws.tk.call("source", THEME_DIR / "main.tcl")
         if darkdetect and darkdetect.isDark():
             ws.tk.call("set_theme", "dark")
         else:
@@ -130,10 +148,10 @@ try:
         if RAISE_THEME_EXCEPTION:
             raise e
 
-    ws.title(f"Watermark Remover v{__version__} - by [www.nask.io]")
+    ws.title(title)
     # ws.resizable(False, False)
     # center window
-    window_height = 696
+    window_height = 664
     window_width = 720
     screen_width = ws.winfo_screenwidth()
     screen_height = ws.winfo_screenheight()

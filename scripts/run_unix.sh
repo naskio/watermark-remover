@@ -2,9 +2,9 @@
 
 # usage:
 # Executable:
-# ./test_scripts/run_unix.sh -e "./scripts/dist/WatermarkRemover-macos-0.4.0" -t 30; echo $?
+# ./scripts/run_unix.sh -e "./dist/WatermarkRemover-macos" -t 30; echo $?
 # app:
-# ./test_scripts/run_unix.sh -a "./scripts/dist/WatermarkRemover-macos-0.4.0.app/" -t 30; echo $?
+# ./scripts/run_unix.sh -a "./dist/WatermarkRemover.app/" -t 30; echo $?
 
 helpFunction()
 {

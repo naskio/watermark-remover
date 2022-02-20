@@ -1,34 +1,30 @@
 #!/bin/bash
 # Build & test locally (unix: bash)
-
-version=0.4.0
+source .env
 timeout=35
 appname=WatermarkRemover
 platform=macos # or: linux
 
-echo "Building for $platform version $version ..."
+echo "Building for $platform version $VERSION:"
 echo "cleaning ..."
-rm -r build
-rm -r dist
-rm "$appname-$platform-$version.spec"
-python3 ./scripts/build.py
+python3 build.py --clean --debug $DEBUG
+echo "building ..."
+python3 build.py --debug $DEBUG --version $VERSION
 echo "Build complete."
 echo "----------------------------------------------------"
 echo "Running CLI tests ..."
 echo "renaming cli ..."
-mv ./dist/$appname-$platform-$version ./dist/$appname-$platform
+mv ./dist/$appname ./dist/$appname-$platform
 echo "adding permission to cli ..."
 chmod +x ./dist/$appname-$platform
 echo "running cli ..."
-./test_scripts/run_unix.sh -e "./dist/$appname-$platform" -t $timeout; echo $?
+./scripts/run_unix.sh -e "./dist/$appname-$platform" -t $timeout; echo $?
 # if macOS, run tests of .app
 if [ $platform = "macos" ]; then
   echo "----------------------------------------------------"
   echo "Running .app tests ..."
-  echo "renaming .app ..."
-  mv ./dist/$appname-$platform-$version.app ./dist/$appname.app
   echo "adding permission to .app ..."
-  chmod +x ./dist/$appname.app/Contents/MacOS/$appname-$platform-$version
+  chmod +x ./dist/$appname.app/Contents/MacOS/$appname
   echo "running .app ..."
-  ./test_scripts/run_unix.sh -a "./dist/$appname.app/" -t $timeout; echo $?
+  ./scripts/run_unix.sh -a "./dist/$appname.app/" -t $timeout; echo $?
 fi
