@@ -72,7 +72,7 @@ def clean_files(info: dict):
         spec_file.unlink()
 
 
-def build_app(info: dict):
+def build_app(info: dict, dirmode):
     """Build the app."""
     logger.info(f'Building version {info.get("version")}...')
     pprint.pprint(info)
@@ -85,7 +85,7 @@ def build_app(info: dict):
         logger.warning(f'{env_file} not found.')
     pi_args = [
         str(BASE_DIR / f'{info.get("app_name")}.py'),
-        '--onefile',
+        '--onefile' if not dirmode else '--onedir',
         '--windowed',
         f'--icon={info.get("icon_path")}',
         '--clean',
@@ -103,11 +103,11 @@ def build_app(info: dict):
     return PyInstaller.__main__.run(pi_args)
 
 
-def main(version: str = None, debug: bool = False, clean: bool = False):
+def main(version: str = None, debug: bool = False, clean: bool = False, dirmode: bool = False):
     info = get_info(version, debug)
     if clean:
         return clean_files(info)
-    return build_app(info)
+    return build_app(info, dirmode)
 
 
 if __name__ == '__main__':

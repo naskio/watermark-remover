@@ -11,7 +11,7 @@ on:
       timeout:
         description: 'timeout in seconds'
         required: true
-        default: '60'
+        default: '30'
         type: string
 
 jobs:
