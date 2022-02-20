@@ -7,13 +7,16 @@ import darkdetect
 from environs import Env
 from marshmallow.validate import Regexp
 import sys
+from logging import getLogger
+
+logger = getLogger(__name__)
 
 BASE_DIR = Path(__file__).parent
 DEFAULT_DIR = Path.home() / 'Desktop'
 ENV_FILE = BASE_DIR / '.env'
 THEME_DIR = BASE_DIR / 'resources' / 'theme'
 
-# We need to create a file at build-time and add it to the bundle of the app and then import it using environs
+# VARS
 env = Env()
 env.read_env(str(ENV_FILE))  # read .env file, if it exists
 DEBUG = env.bool("DEBUG", False)
@@ -22,25 +25,27 @@ VERSION = env.str(
     validate=Regexp(r"^\d+\.\d+\.\d+$"),
     default="0.0.0",
 )
+TITLE = f"Watermark Remover - by [www.nask.io]"
+RAISE_THEME_EXCEPTION = True
+if VERSION != "0.0.0":
+    TITLE = f"Watermark Remover v{VERSION} - by [www.nask.io]"
 
-# Title of the app
-if VERSION == "0.0.0":
-    title = f"Watermark Remover - by [www.nask.io]"
-else:
-    title = f"Watermark Remover v{VERSION} - by [www.nask.io]"
+# Widgets
+LOG_TXT_AREA_WIDGET = None
+METHOD_CHOICE_STRING_VAR = None
 
 
 def log_clear():
-    log_txt_area.config(state=NORMAL)
-    log_txt_area.delete(1.0, END)
-    log_txt_area.config(state=DISABLED)
+    LOG_TXT_AREA_WIDGET.config(state=NORMAL)
+    LOG_TXT_AREA_WIDGET.delete(1.0, END)
+    LOG_TXT_AREA_WIDGET.config(state=DISABLED)
 
 
 def log_write(text):
-    log_txt_area.config(state=NORMAL)
-    log_txt_area.insert(END, text)
-    log_txt_area.insert(END, '\n')
-    log_txt_area.config(state=DISABLED)
+    LOG_TXT_AREA_WIDGET.config(state=NORMAL)
+    LOG_TXT_AREA_WIDGET.insert(END, text)
+    LOG_TXT_AREA_WIDGET.insert(END, '\n')
+    LOG_TXT_AREA_WIDGET.config(state=DISABLED)
 
 
 def open_files():
@@ -69,7 +74,7 @@ def open_files():
                         output_file = output_dir_path / (input_path.stem + f"_generated{input_path.suffix}")
                         log_write(f'Output: {output_file}')
                         log_write("Processing...")
-                        p_method_choice = MethodChoice.from_str(method_choice.get())
+                        p_method_choice = MethodChoice.from_str(METHOD_CHOICE_STRING_VAR.get())
                         log_write(f"method: {p_method_choice.value}")
                         output_file = main(input_file, str(output_file), p_method_choice)
                         log_write(f'File has been saved successfully to: {output_file}')
@@ -119,36 +124,25 @@ def get_output_dir(base_dir: Path) -> Optional[str]:
     if _dir is None:
         return None
     else:
-        print(_dir)
+        # print(_dir)
         return str(_dir)
 
 
-# theming
-LOAD_THEME_DYNAMIC = False
-RAISE_THEME_EXCEPTION = True
-
-try:
+def main():
     ws = Tk()
     # setting theme
     try:
-        if LOAD_THEME_DYNAMIC:
-            with open(THEME_DIR / 'main_dynamic.tcl', 'r', encoding="utf-8") as f:
-                lines = f"source {THEME_DIR / 'theme' / 'light.tcl'}\nsource {THEME_DIR / 'theme' / 'dark.tcl'}\n"
-                lines += f.read()
-                ws.tk.eval(lines)
-        else:
-            ws.tk.call("source", THEME_DIR / "main.tcl")
+        ws.tk.call("source", THEME_DIR / "main.tcl")
         if darkdetect and darkdetect.isDark():
             ws.tk.call("set_theme", "dark")
         else:
             ws.tk.call("set_theme", "light")
     except Exception as e:
-        print(e)
-        print("Theme not loaded")
+        logger.error("Theme not loaded", exc_info=e)
         if RAISE_THEME_EXCEPTION:
             raise e
 
-    ws.title(title)
+    ws.title(TITLE)
     # ws.resizable(False, False)
     # center window
     window_height = 664
@@ -160,12 +154,12 @@ try:
     ws.geometry(f"{window_width}x{window_height}+{x_coordinate}+{y_coordinate}")
     # ws.geometry("694x600")
     # ws['bg'] = 'gray'
-
-    log_txt_area = Text(
+    global LOG_TXT_AREA_WIDGET
+    LOG_TXT_AREA_WIDGET = Text(
         ws, width=60, height=30, state=DISABLED,
         # bg='white', fg='black'
     )
-    log_txt_area.pack(pady=30)
+    LOG_TXT_AREA_WIDGET.pack(pady=30)
 
     Button(
         ws,
@@ -177,19 +171,23 @@ try:
 
     # display title
     Label(ws, text="Method").pack(side=LEFT, expand=True, fill=X, padx=30)
-    method_choice = StringVar(value=MethodChoice.geofond1dot22.name)
+    global METHOD_CHOICE_STRING_VAR
+    METHOD_CHOICE_STRING_VAR = StringVar(value=MethodChoice.geofond1dot22.name)
     for method in MethodChoice:
         Radiobutton(
             ws,
             text=method.value,
-            variable=method_choice,
+            variable=METHOD_CHOICE_STRING_VAR,
             value=method.name,
             # bg='gray',
             # fg='black'
         ).pack(side=LEFT, expand=True, fill=X, padx=5)
 
     ws.mainloop()
+
+
+try:
+    main()
 except Exception as e:
-    print("Unhandled exception")
-    print(e)
+    logger.error("Unhandled exception", exc_info=e)
     sys.exit(1)

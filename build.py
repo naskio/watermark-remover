@@ -9,6 +9,9 @@ from pathlib import Path
 import os
 import shutil
 import pprint
+from logging import getLogger
+
+logger = getLogger(__name__)
 
 BASE_DIR = Path(__file__).parent
 RESOURCES_DIR = BASE_DIR / 'resources'
@@ -71,18 +74,15 @@ def clean_files(info: dict):
 
 def build_app(info: dict):
     """Build the app."""
-    print(f'Building version {info.get("version")}...')
-    print('info:')
+    logger.info(f'Building version {info.get("version")}...')
     pprint.pprint(info)
     # add file assets
     theme_dir = BASE_DIR / "resources" / "theme"
-    if not theme_dir.exists():
-        if not info.get('debug'):
-            raise FileNotFoundError(f'{theme_dir} not found.')
     env_file = BASE_DIR / '.env'
+    if not theme_dir.exists():
+        logger.warning(f'{theme_dir} not found.')
     if not env_file.exists():
-        if not info.get('debug'):
-            raise FileNotFoundError(f'{env_file} not found.')
+        logger.warning(f'{env_file} not found.')
     pi_args = [
         str(BASE_DIR / f'{info.get("app_name")}.py'),
         '--onefile',

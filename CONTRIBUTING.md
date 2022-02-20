@@ -60,6 +60,13 @@ open -n WatermarkRemover.app
 ./test_build.local.sh 35
 ```
 
+## GitHub Actions
+
+Optionally, we can create an `.env` file in the workflow with the following variables:
+
+- VERSION: the version of the application
+- DEBUG: the debug mode of the application
+
 --------------------------------------------------------------------------------
 
 # Release
