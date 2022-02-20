@@ -60,6 +60,14 @@ open -n WatermarkRemover.app
 ./test_build.local.sh 35
 ```
 
+## Build installer (Windows only)
+
+Using nsis:
+
+```
+makensis config.nsi
+```
+
 ## GitHub Actions
 
 Optionally, we can create an `.env` file in the workflow with the following variables:
