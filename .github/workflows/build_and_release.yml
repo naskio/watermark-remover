@@ -137,10 +137,12 @@ jobs:
           ls ./macos-latest/WatermarkRemover.app/Contents/MacOS/
           chmod +x ./macos-latest/WatermarkRemover.app/Contents/MacOS/WatermarkRemover
 
-      - name: Zip MAC OS app
+      - name: Install zip
         uses: montudor/action-zip@v1
-        with:
-          args: zip -qq -r WatermarkRemover-macos.zip macos-latest/WatermarkRemover.app
+
+      - name: Zip MAC OS app
+        run: zip -qq -r WatermarkRemover-macos.zip WatermarkRemover.app
+        working-directory: macos-latest/
 
       - name: List the files
         run: ls -l && ls -l ubuntu-latest/ && ls -l windows-latest/ && ls -l macos-latest/
@@ -155,5 +157,4 @@ jobs:
             ubuntu-latest/*
             windows-latest/*
             macos-latest/*
-            WatermarkRemover-macos.zip
             LICENSE
