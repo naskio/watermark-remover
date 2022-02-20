@@ -90,17 +90,6 @@ Section "Main Section" SecMain
 SectionEnd
 
 ;--------------------------------
-;Descriptions
-
-  ;Language strings
-  ;LangString DESC_SecMain ${LANG_ENGLISH} "The main section."
-
-  ;Assign language strings to sections
-  ;!insertmacro MUI_FUNCTION_DESCRIPTION_BEGIN
-  ;!insertmacro MUI_DESCRIPTION_TEXT ${SecMain} $(DESC_SecMain)
-  ;!insertmacro MUI_FUNCTION_DESCRIPTION_END
-
-;--------------------------------
 ;Uninstaller Section
 
 Section "Uninstall"
@@ -133,16 +122,9 @@ SectionEnd
 ; Custom functions
 
 Function MyWelcomeShowCallback
-  #${NSD_CreateLabel} 120u 150u 50% 12u "Developed by: GitHub@naskio"
-  ${NSD_CreateLink} 120u 150u 50% 12u "Developed by: GitHub@naskio"
+  ${NSD_CreateLabel} 120u 150u 50% 12u "Developed by: GitHub@naskio"
   Pop $0
   SetCtlColors $0 "" "${MUI_BGCOLOR}"
-  ${NSD_OnClick} $0 onMyLinkClick
-FunctionEnd
-
-Function onMyLinkClick
-  Pop $0
-  ExecShell "open" "https://www.nask.io"
 FunctionEnd
 
 ;--------------------------------
