@@ -156,7 +156,7 @@ jobs:
         uses: montudor/action-zip@v1
 
       - name: Zip MAC OS app
-        run: zip -qq -r WatermarkRemover-macos.zip WatermarkRemover.app
+        run: zip -qq -r WatermarkRemover-macos-app.zip WatermarkRemover.app
         working-directory: macos-latest/
 
       - name: List the files
