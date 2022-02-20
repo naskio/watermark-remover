@@ -91,6 +91,7 @@ def build_app(info: dict):
         '--clean',
         '--log-level=WARN',
         f'--name={info.get("full_name")}',
+        # f'--splash={BASE_DIR / "resources" / "splash.png"}', # not supported in macOS
         '-y'
     ]
     if theme_dir.exists():
