@@ -149,7 +149,7 @@ jobs:
       - name: Repair (add permissions)
         run: |
           chmod +x ./ubuntu-latest/WatermarkRemover-linux
-          chmod +x ./macos-latest/WatermarkRemover-macos
+          # chmod +x ./macos-latest/WatermarkRemover-macos
           ls ./macos-latest/WatermarkRemover.app/Contents/MacOS/
           chmod +x ./macos-latest/WatermarkRemover.app/Contents/MacOS/WatermarkRemover
 
