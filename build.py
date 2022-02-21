@@ -35,7 +35,7 @@ def get_info(version: str = None, debug: bool = False) -> dict:
         add_data_separator = ":"
     elif platform_name == "win32":  # Windows
         icon_path = RESOURCES_DIR / 'icon.ico'
-        os_name = 'wind32'
+        os_name = 'win32'
         add_data_separator = ";"
     elif platform_name == "win64":  # Windows 64-bit
         icon_path = RESOURCES_DIR / 'icon.ico'
@@ -86,6 +86,7 @@ def build_app(info: dict, dirmode):
     pi_args = [
         str(BASE_DIR / f'{info.get("app_name")}.py'),
         '--onefile' if not dirmode else '--onedir',
+        '--noupx' if info.get('os_name', '').startswith('win') else '',
         '--windowed',
         f'--icon={info.get("icon_path")}',
         '--clean',
