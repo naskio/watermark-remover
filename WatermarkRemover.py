@@ -25,10 +25,10 @@ VERSION = env.str(
     validate=Regexp(r"^\d+\.\d+\.\d+$"),
     default="0.0.0",
 )
-TITLE = f"Watermark Remover - by [www.nask.io]"
+TITLE = f"Watermark Remover - by [www.NasK.io]"
 RAISE_THEME_EXCEPTION = True
 if VERSION != "0.0.0":
-    TITLE = f"Watermark Remover v{VERSION} - by [www.nask.io]"
+    TITLE = f"Watermark Remover v{VERSION} - by [www.NasK.io]"
 
 # Widgets
 LOG_TXT_AREA_WIDGET = None
@@ -128,7 +128,7 @@ def get_output_dir(base_dir: Path) -> Optional[str]:
         return str(_dir)
 
 
-def main():
+def main_ui():
     ws = Tk()
     # setting theme
     try:
@@ -187,7 +187,7 @@ def main():
 
 
 try:
-    main()
-except Exception as e:
-    logger.error("Unhandled exception", exc_info=e)
+    main_ui()
+except Exception as ee:
+    logger.error("Unhandled exception", exc_info=ee)
     sys.exit(1)
