@@ -86,7 +86,7 @@ def build_app(info: dict, dirmode):
     pi_args = [
         str(BASE_DIR / f'{info.get("app_name")}.py'),
         '--onefile' if not dirmode else '--onedir',
-        '--noupx' if info.get('os_name', '').startswith('win') else '',
+        '--noupx' if info.get('os_name', '').startswith('win') else None,
         '--windowed',
         f'--icon={info.get("icon_path")}',
         '--clean',
@@ -101,7 +101,7 @@ def build_app(info: dict, dirmode):
     if env_file.exists():
         pi_args.append(f'--add-data={env_file}{info.get("add_data_separator")}.')
     # build
-    return PyInstaller.__main__.run(pi_args)
+    return PyInstaller.__main__.run([x for x in pi_args if x])
 
 
 def main(version: str = None, debug: bool = False, clean: bool = False, dirmode: bool = False):
