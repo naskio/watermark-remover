@@ -41,13 +41,15 @@ jobs:
 
       - name: Build app
         run: |
-          python build.py --version "$VERSION" --nodebug --genenv --sentry_dsn ${{ secrets.SENTRY_DSN }}
+          echo "Building version $VERSION..."
+          python build.py --nodebug --genenv --sentry_dsn ${{ secrets.SENTRY_DSN }} --version "$VERSION"
         env:
           VERSION: ${{ steps.get_version.outputs.VERSION }}
 
       - name: Build app (dirmode)
         run: |
-          python build.py --version "$VERSION" --nodebug --dirmode --genenv --sentry_dsn ${{ secrets.SENTRY_DSN }}
+          echo "Building version $VERSION..."
+          python build.py --nodebug --dirmode --genenv --sentry_dsn ${{ secrets.SENTRY_DSN }} --version "$VERSION"
         if: runner.os == 'Windows'
         env:
           VERSION: ${{ steps.get_version.outputs.VERSION }}
