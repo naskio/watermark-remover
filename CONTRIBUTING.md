@@ -36,7 +36,7 @@ Generate builds:
 
 3. using `build.py` script
    ```shell
-   source .env; python3 build.py --version $VERSION --debug $DEBUG
+   source .env; python3 build.py --debug $DEBUG --version $VERSION --genenv --sentry_dsn $SENTRY_DSN
    ```
 
 4. or Using [pyinstaller](https://pyinstaller.readthedocs.io/en/stable/index.html)

@@ -1,4 +1,4 @@
-from typing import Dict, List
+from typing import Dict, List, Union, Callable
 from PIL import Image
 from pathlib import Path
 import zlib
@@ -11,17 +11,30 @@ import numpy as np
 # from quality import improve_text_in_image
 import fire
 from enum import Enum
+from logging import getLogger
+from sentry_sdk import capture_message
+
+logger = getLogger(__name__)
+
+
+def w_sentry(fn: Callable, *args, **kwargs) -> bool:
+    try:
+        fn(*args, **kwargs)
+        return True
+    except Exception as e:
+        logger.info("Sentry setup issue", exc_info=e)
+        return False
 
 
 class MethodChoice(Enum):
-    geofond1dot22 = "GEOFOND v1.22"
+    geos = "GEOS"
     colors_replacement = "Replace colors"
     openCV2 = "OpenCV2"
 
     @staticmethod
     def from_str(label):
-        if label in ('geofond1dot22',):
-            return MethodChoice.geofond1dot22
+        if label in ('geos',):
+            return MethodChoice.geos
         elif label in ('colors_replacement',):
             return MethodChoice.colors_replacement
         elif label in ('openCV2',):
@@ -176,17 +189,17 @@ def generate_output_path(input_path: Path) -> Path:
     return input_path.parent / (input_path.stem + f"_generated{input_path.suffix}")
 
 
-def remove_watermark_from_geofond_pdf(input_file: Path, output_file: Path) -> str:
+def remove_watermark_from_geos_pdf(input_file: Path, output_file: Path) -> str:
     """
-    Remove watermark from pdf (exported from GEOFOND v1.22) and save to output_file.
+    Remove watermark from pdf (exported from any GEOS app) and save to output_file.
     :param input_file:
     :param output_file:
     :return:
     """
     pdf = Pdf.open(input_file)
-    footer_watermark = None
     for page_number, page in enumerate(pdf.pages):
         page_instructions = parse_content_stream(page)
+
         # remove VERSION EVALUATION (last f operator)
         for i in reversed(range(len(page_instructions))):
             op = page_instructions[i].operator.__str__()
@@ -195,20 +208,23 @@ def remove_watermark_from_geofond_pdf(input_file: Path, output_file: Path) -> st
                 break
         page_instructions = [x for x in page_instructions if x is not None]  # remove None
 
-        # remove Trial - \d+ (last TJ with 54 operands)
+        # remove watermark in footer
+        nb_captured = 0
         for i in reversed(range(len(page_instructions))):
             op = page_instructions[i].operator.__str__()
             if op == 'TJ':
                 instruction = page_instructions[i]
-                if footer_watermark is None:  # first page
-                    if len(instruction.operands[0]) == 54:
-                        footer_watermark = instruction.operands.__str__()
+                if str(instruction.operands[0][-1]) == '-0.152344' and str(instruction.operands[0][0]) == '\x007':
+                    nb_captured += 1
+                    if nb_captured == 1:
                         page_instructions[i] = None
-                        break
-                else:  # other pages
-                    if instruction.operands.__str__() == footer_watermark:
-                        page_instructions[i] = None
-                        break
+                    # break
+
+        if nb_captured > 1:  # logging to sentry
+            message = f"{input_file} at page {page_number + 1} => too much detected. ({nb_captured} > 1)"
+            logger.warning(message)
+            w_sentry(capture_message, message)
+
         page_instructions = [x for x in page_instructions if x is not None]  # remove None
         new_content_stream = unparse_content_stream(page_instructions)
         page.Contents = pdf.make_stream(new_content_stream)  # override page contents
@@ -224,8 +240,8 @@ def remove_watermark_from_pdf(input_file: Path, output_file: Path, method_choice
     :param method_choice:
     :return:
     """
-    if method_choice == MethodChoice.geofond1dot22:
-        return remove_watermark_from_geofond_pdf(input_file, output_file)
+    if method_choice == MethodChoice.geos:
+        return remove_watermark_from_geos_pdf(input_file, output_file)
     pdf = Pdf.open(input_file)
     for page in pdf.pages:
         for image_key in page.images.keys():
@@ -277,7 +293,7 @@ def remove_watermark_from_image(input_file: Path, output_file: Path, method_choi
     return str(output_file)
 
 
-def main(input_file: str, output_file: str = None, method_choice: MethodChoice = None) -> str:
+def main(input_file: Union[str, Path], output_file: Union[str, Path] = None, method_choice: MethodChoice = None) -> str:
     """
     Entry point
     :param input_file:
@@ -307,7 +323,8 @@ def main(input_file: str, output_file: str = None, method_choice: MethodChoice =
         raise Exception(f"Unsupported file type: {input_path.suffix}")
 
 
-def mmain(input_files: List[str], output_dir: str = None, method_choice: MethodChoice = None) -> List[str]:
+def mmain(input_files: List[Union[str, Path]], output_dir: Union[str, Path] = None,
+          method_choice: MethodChoice = None) -> List[str]:
     """
     Entry point
     :param input_files:

@@ -1,7 +1,5 @@
 # Change Log
 
-- Removing dynamic theme loading
-- Add main_ui function
-- Add NSIS installer
-- reducing wait-time at startup
-- using --noupx on Windows
+- Add support for all GEOS applications
+- Add sentry for error reporting
+- Generating env file during build process

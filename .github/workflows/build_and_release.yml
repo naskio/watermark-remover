@@ -1,3 +1,8 @@
+########## ENV VARS ##########
+# - SENTRY_DSN
+########## ENV VARS ##########
+
+
 name: Build, Test and Release
 
 on:
@@ -35,11 +40,11 @@ jobs:
 
       - name: Build app
         run: |
-          python build.py --version ${{ steps.get_version.outputs.VERSION }} --nodebug
+          python build.py --version ${{ steps.get_version.outputs.VERSION }} --nodebug --genenv --sentry_dsn ${{ secrets.SENTRY_DSN }}
 
       - name: Build app (dirmode)
         run: |
-          python build.py --version ${{ steps.get_version.outputs.VERSION }} --nodebug --dirmode
+          python build.py --version ${{ steps.get_version.outputs.VERSION }} --nodebug --dirmode --genenv --sentry_dsn ${{ secrets.SENTRY_DSN }}
         if: runner.os == 'Windows'
 
       - name: Linux - install and launch xvfb (GUI on Linux)

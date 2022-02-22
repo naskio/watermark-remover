@@ -17,7 +17,8 @@ BASE_DIR = Path(__file__).parent
 RESOURCES_DIR = BASE_DIR / 'resources'
 
 
-def get_info(version: str = None, debug: bool = False) -> dict:
+def get_info(version: str = None, debug: bool = False, genenv: bool = False,
+             sentry_dsn: str = None) -> dict:
     """Get the info for the build."""
 
     app_name = 'WatermarkRemover'
@@ -55,7 +56,26 @@ def get_info(version: str = None, debug: bool = False) -> dict:
         'add_data_separator': add_data_separator,
         'version': version,
         'debug': debug,
+        'genenv': genenv,
+        'sentry_dsn': sentry_dsn,
     }
+
+
+def generate_env(info: dict):
+    """Generate the environment file."""
+    logger.info(f'Generating environment file...')
+    env_file = BASE_DIR / '.env'
+    if not env_file.exists():
+        logger.info(f'Creating a new environment file...')
+        env_file.touch()
+        with open(env_file, 'w') as f:
+            f.write(f'DEBUG={info.get("debug")}\n')
+            if info.get('version'):
+                f.write(f'VERSION={info.get("version")}\n')
+            if info.get('sentry_dsn'):
+                f.write(f'SENTRY_DSN={info.get("sentry_dsn")}\n')
+    else:
+        logger.info(f'Environment file already exists.')
 
 
 def clean_files(info: dict):
@@ -104,10 +124,13 @@ def build_app(info: dict, dirmode):
     return PyInstaller.__main__.run([x for x in pi_args if x])
 
 
-def main(version: str = None, debug: bool = False, clean: bool = False, dirmode: bool = False):
-    info = get_info(version, debug)
+def main(version: str = None, debug: bool = False, clean: bool = False, dirmode: bool = False, genenv: bool = False,
+         sentry_dsn: str = None):
+    info = get_info(version, debug, genenv, sentry_dsn)
     if clean:
         return clean_files(info)
+    if genenv:
+        generate_env(info)
     return build_app(info, dirmode)
 
 

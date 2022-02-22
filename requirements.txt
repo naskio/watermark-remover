@@ -7,6 +7,7 @@ fire==0.4.0
 darkdetect==0.5.1
 environs==9.5.0
 marshmallow==3.14.1
+sentry-sdk==1.5.6
 # python-docx
 # docxtpl
 # PyPDF2

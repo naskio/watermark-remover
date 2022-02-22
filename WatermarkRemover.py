@@ -1,13 +1,15 @@
 from tkinter import Tk, StringVar, END, RIGHT, X, LEFT, Text, DISABLED, NORMAL, filedialog
 from tkinter.ttk import Button, Radiobutton, Label
 from pathlib import Path
-from main import main, generate_output_path, MethodChoice
+from main import main, generate_output_path, MethodChoice, w_sentry
 from typing import Optional
 import darkdetect
 from environs import Env
 from marshmallow.validate import Regexp
 import sys
 from logging import getLogger
+import sentry_sdk
+from sentry_sdk import capture_exception, capture_message
 
 logger = getLogger(__name__)
 
@@ -25,6 +27,7 @@ VERSION = env.str(
     validate=Regexp(r"^\d+\.\d+\.\d+$"),
     default="0.0.0",
 )
+SENTRY_DSN = env.str("SENTRY_DSN", default=None)
 TITLE = f"Watermark Remover - by [www.NasK.io]"
 RAISE_THEME_EXCEPTION = True
 if VERSION != "0.0.0":
@@ -33,6 +36,8 @@ if VERSION != "0.0.0":
 # Widgets
 LOG_TXT_AREA_WIDGET = None
 METHOD_CHOICE_STRING_VAR = None
+# OTHERS
+SENTRY_STATUS = False
 
 
 def log_clear():
@@ -56,6 +61,7 @@ def open_files():
                    ("Image Files", ".jpg"), ("Image Files", ".jpeg"), ],
     )
     log_clear()
+    log_write(f"Sentry status: {SENTRY_STATUS}")
     if input_files:  # file selected
         output_dir = get_output_dir(DEFAULT_DIR)
         if output_dir:
@@ -139,6 +145,8 @@ def main_ui():
             ws.tk.call("set_theme", "light")
     except Exception as e:
         logger.error("Theme not loaded", exc_info=e)
+        w_sentry(capture_message, "Theme not loaded")
+        w_sentry(capture_exception, e)
         if RAISE_THEME_EXCEPTION:
             raise e
 
@@ -172,7 +180,7 @@ def main_ui():
     # display title
     Label(ws, text="Method").pack(side=LEFT, expand=True, fill=X, padx=30)
     global METHOD_CHOICE_STRING_VAR
-    METHOD_CHOICE_STRING_VAR = StringVar(value=MethodChoice.geofond1dot22.name)
+    METHOD_CHOICE_STRING_VAR = StringVar(value=MethodChoice.geos.name)
     for method in MethodChoice:
         Radiobutton(
             ws,
@@ -187,7 +195,11 @@ def main_ui():
 
 
 try:
+    SENTRY_STATUS = w_sentry(sentry_sdk.init,
+                             SENTRY_DSN,
+                             traces_sample_rate=0.10, )  # capture x% of transactions for performance monitoring
     main_ui()
 except Exception as ee:
     logger.error("Unhandled exception", exc_info=ee)
+    w_sentry(capture_message, ee)
     sys.exit(1)
