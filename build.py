@@ -85,12 +85,15 @@ def clean_files(info: dict):
     build_dir = BASE_DIR / 'build'
     dist_dir = BASE_DIR / 'dist'
     spec_file = BASE_DIR / f'{info.get("full_name")}.spec'
+    env_file = BASE_DIR / 'vars.txt'
     if build_dir.exists():
         shutil.rmtree(build_dir)
     if dist_dir.exists():
         shutil.rmtree(dist_dir)
     if spec_file.exists():
         spec_file.unlink()
+    if env_file.exists():
+        env_file.unlink()
 
 
 def build_app(info: dict, dirmode):

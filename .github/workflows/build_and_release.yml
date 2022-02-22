@@ -31,6 +31,7 @@ jobs:
           echo RELEASE_VERSION: $RELEASE_VERSION
           echo RELEASE_VERSION_env: ${{ env.RELEASE_VERSION }}
           echo RELEASE_VERSION_set_output: ${{ steps.get_version.outputs.VERSION }}
+        shell: bash
 
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v2

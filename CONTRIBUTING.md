@@ -26,6 +26,7 @@ Generate builds:
    ```shell
    cp .env.example .env
    ```
+   `.env` is used during development and at build-time (but not included in builds, we generate and include `vars.txt`).
 
 2. Load env variables
    ```shell

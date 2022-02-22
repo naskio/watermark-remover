@@ -15,8 +15,8 @@ logger = getLogger(__name__)
 
 BASE_DIR = Path(__file__).parent
 DEFAULT_DIR = Path.home() / 'Desktop'
-ENV_FILE = BASE_DIR / 'vars.txt'
-if not ENV_FILE.exists():
+ENV_FILE = BASE_DIR / 'vars.txt'  # for builds
+if not ENV_FILE.exists():  # for development mode (running python script directly)
     ENV_FILE = BASE_DIR / '.env'
 THEME_DIR = BASE_DIR / 'resources' / 'theme'
 
