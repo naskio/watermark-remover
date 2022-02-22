@@ -15,7 +15,9 @@ logger = getLogger(__name__)
 
 BASE_DIR = Path(__file__).parent
 DEFAULT_DIR = Path.home() / 'Desktop'
-ENV_FILE = BASE_DIR / '.env'
+ENV_FILE = BASE_DIR / 'vars.txt'
+if not ENV_FILE.exists():
+    ENV_FILE = BASE_DIR / '.env'
 THEME_DIR = BASE_DIR / 'resources' / 'theme'
 
 # VARS
@@ -61,7 +63,7 @@ def open_files():
                    ("Image Files", ".jpg"), ("Image Files", ".jpeg"), ],
     )
     log_clear()
-    log_write(f"Sentry status: {SENTRY_STATUS}")
+    log_write(f"Sentry status: {'Enabled' if SENTRY_STATUS else 'Disabled'}")
     if input_files:  # file selected
         output_dir = get_output_dir(DEFAULT_DIR)
         if output_dir:

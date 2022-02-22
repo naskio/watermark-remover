@@ -64,12 +64,13 @@ def get_info(version: str = None, debug: bool = False, genenv: bool = False,
 def generate_env(info: dict):
     """Generate the environment file."""
     logger.info(f'Generating environment file...')
-    env_file = BASE_DIR / '.env'
+    env_file = BASE_DIR / 'vars.txt'
     if not env_file.exists():
         logger.info(f'Creating a new environment file...')
         env_file.touch()
         with open(env_file, 'w') as f:
-            f.write(f'DEBUG={info.get("debug")}\n')
+            if info.get('debug'):
+                f.write(f'DEBUG={info.get("debug")}\n')
             if info.get('version'):
                 f.write(f'VERSION={info.get("version")}\n')
             if info.get('sentry_dsn'):
@@ -98,7 +99,7 @@ def build_app(info: dict, dirmode):
     pprint.pprint(info)
     # add file assets
     theme_dir = BASE_DIR / "resources" / "theme"
-    env_file = BASE_DIR / '.env'
+    env_file = BASE_DIR / 'vars.txt'
     if not theme_dir.exists():
         logger.warning(f'{theme_dir} not found.')
     if not env_file.exists():

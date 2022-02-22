@@ -180,3 +180,4 @@ Temporary Items
 *.tmp
 /tmp
 *.exe
+vars.txt
