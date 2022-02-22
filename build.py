@@ -110,7 +110,7 @@ def build_app(info: dict, dirmode):
     pi_args = [
         str(BASE_DIR / f'{info.get("app_name")}.py'),
         '--onefile' if not dirmode else '--onedir',
-        '--noupx' if info.get('os_name', '').startswith('win') else None,
+        # '--noupx' if info.get('os_name', '').startswith('win') else None, # useless since not working in Windows 7
         '--windowed',
         f'--icon={info.get("icon_path")}',
         '--clean',
