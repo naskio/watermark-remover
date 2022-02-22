@@ -41,7 +41,7 @@ jobs:
 
       - name: Build
         run: |
-          python build.py --version ${{ github.event.inputs.version }} --nodebug
+          python build.py --version=${{ github.event.inputs.version }} --nodebug
 
       - name: Install and launch xvfb (GUI on Linux)
         if: runner.os == 'Linux'

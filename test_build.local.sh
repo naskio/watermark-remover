@@ -6,9 +6,9 @@ appname=WatermarkRemover
 platform=macos # or: linux
 echo "Building for $platform version $VERSION:"
 echo "cleaning ..."
-python3 build.py --clean --debug $DEBUG
+python3 build.py --clean --debug=$DEBUG
 echo "building ..."
-python3 build.py --debug $DEBUG --version $VERSION --genenv --sentry_dsn $SENTRY_DSN
+python3 build.py --debug=$DEBUG --version=$VERSION --genenv --sentry_dsn=$SENTRY_DSN
 echo "Build complete."
 echo "----------------------------------------------------"
 echo "Running CLI tests ..."

@@ -41,7 +41,7 @@ jobs:
 
       - name: Build
         run: |
-          python build.py --version ${{ github.event.inputs.version }} --nodebug --dirmode
+          python build.py --version=${{ github.event.inputs.version }} --nodebug --dirmode
 
       - name: Install coreutils (timeout cmd needs this)
         if: runner.os == 'macOS'
