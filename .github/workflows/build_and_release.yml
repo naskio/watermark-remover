@@ -21,9 +21,15 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - name: Get the version # get the version from the tag
-        id: get_version
-        run: echo ::set-output name=VERSION::${GITHUB_REF#refs/tags/}
+      # - name: Get the version # get the version from the tag
+      #   id: get_version
+      #   run: echo ::set-output name=VERSION::${GITHUB_REF#refs/tags/}
+
+      - name: Set the version to env var
+        run: |
+          echo "RELEASE_VERSION=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
+          # echo $RELEASE_VERSION
+          # echo ${{ env.RELEASE_VERSION }}
 
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v2
@@ -41,13 +47,13 @@ jobs:
 
       - name: Build app
         run: |
-          echo Building version ${{ steps.get_version.outputs.VERSION }}
-          python build.py --nodebug --genenv --sentry_dsn ${{ secrets.SENTRY_DSN }} --version ${{ steps.get_version.outputs.VERSION }}
+          echo Building version $RELEASE_VERSION
+          python build.py --nodebug --genenv --sentry_dsn ${{ secrets.SENTRY_DSN }} --version $RELEASE_VERSION
 
       - name: Build app (dirmode)
         run: |
-          echo Building version ${{ steps.get_version.outputs.VERSION }}
-          python build.py --nodebug --dirmode --genenv --sentry_dsn ${{ secrets.SENTRY_DSN }} --version ${{ steps.get_version.outputs.VERSION }}
+          echo Building version $RELEASE_VERSION
+          python build.py --nodebug --dirmode --genenv --sentry_dsn ${{ secrets.SENTRY_DSN }} --version $RELEASE_VERSION
         if: runner.os == 'Windows'
 
       - name: Linux - install and launch xvfb (GUI on Linux)
