@@ -41,18 +41,14 @@ jobs:
 
       - name: Build app
         run: |
-          echo "Building version $VERSION..."
-          python build.py --nodebug --genenv --sentry_dsn ${{ secrets.SENTRY_DSN }} --version "$VERSION"
-        env:
-          VERSION: ${{ steps.get_version.outputs.VERSION }}
+          echo Building version ${{ steps.get_version.outputs.VERSION }}
+          python build.py --nodebug --genenv --sentry_dsn ${{ secrets.SENTRY_DSN }} --version ${{ steps.get_version.outputs.VERSION }}
 
       - name: Build app (dirmode)
         run: |
-          echo "Building version $VERSION..."
-          python build.py --nodebug --dirmode --genenv --sentry_dsn ${{ secrets.SENTRY_DSN }} --version "$VERSION"
+          echo Building version ${{ steps.get_version.outputs.VERSION }}
+          python build.py --nodebug --dirmode --genenv --sentry_dsn ${{ secrets.SENTRY_DSN }} --version ${{ steps.get_version.outputs.VERSION }}
         if: runner.os == 'Windows'
-        env:
-          VERSION: ${{ steps.get_version.outputs.VERSION }}
 
       - name: Linux - install and launch xvfb (GUI on Linux)
         if: runner.os == 'Linux'

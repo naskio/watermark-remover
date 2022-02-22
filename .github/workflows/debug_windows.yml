@@ -41,7 +41,8 @@ jobs:
 
       - name: Build
         run: |
-          python build.py --version ${{ github.event.inputs.version }} --nodebug --dirmode
+          echo Building version ${{ github.event.inputs.version }}
+          python build.py --nodebug --dirmode --genenv --sentry_dsn ${{ secrets.SENTRY_DSN }} --version ${{ github.event.inputs.version }}
 
       - name: Rename, run and test .exe
         if: runner.os == 'Windows'
