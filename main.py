@@ -3,7 +3,8 @@ from PIL import Image
 from pathlib import Path
 import zlib
 import numpy
-from pikepdf import Pdf, PdfImage, Name, parse_content_stream, unparse_content_stream
+from pikepdf import Pdf, PdfImage, Name, parse_content_stream, unparse_content_stream, ContentStreamInstruction
+from decimal import Decimal
 import cv2
 import zipfile
 import io
@@ -189,6 +190,77 @@ def generate_output_path(input_path: Path) -> Path:
     return input_path.parent / (input_path.stem + f"_generated{input_path.suffix}")
 
 
+def remove_tj_maj(instructions: List[ContentStreamInstruction], tj_start_with: Union[List[bytes], str]) -> \
+        List[ContentStreamInstruction]:
+    """Remove all "TJ" operators if it contains tj_start_with from PDF."""
+    dest = tj_start_with
+    if isinstance(tj_start_with, str):
+        dest = list(map(lambda c: bytes(c, 'utf-8'), tj_start_with))
+    for i in range(len(instructions)):
+        instruction = instructions[i]
+        op = instruction.operator.__str__()
+        if op == 'TJ':
+            source1 = []
+            source2 = []
+            for j in range(len(instruction.operands[0])):
+                if type(instruction.operands[0][j]) not in [int, float, Decimal]:
+                    operand_str = instruction.operands[0][j].__str__()
+                    source2.append(bytes(operand_str, 'utf-8'))
+                    for k in range(len(operand_str)):
+                        source1.append(bytes(operand_str[k], 'utf-8'))
+            for j in range(len(dest)):
+                if dest[j] != source1[j]:
+                    break
+                if j == len(dest) - 1:
+                    instructions[i] = None
+            for j in range(len(dest)):
+                if dest[j] != source2[j]:
+                    break
+                if j == len(dest) - 1:
+                    instructions[i] = None
+    return [x for x in instructions if x is not None]
+
+
+def remove_tjs_min(instructions: List[ContentStreamInstruction], text: Union[List[bytes], str]) -> \
+        List[ContentStreamInstruction]:
+    """Remove all successive "Tj" if it combined equals to text from PDF."""
+    indexes = []
+    found = ""
+    for i in range(len(instructions)):
+        instruction = instructions[i]
+        op = instruction.operator.__str__()
+        if op == 'Tj':
+            indexes.append(i)
+            found += instruction.operands[0].__str__()
+        else:
+            if found:
+                if not text.startswith(found):
+                    indexes = []
+                    found = ""
+                elif text == found:
+                    for index in indexes:
+                        instructions[index] = None
+                    indexes = []
+                    found = ""
+            else:
+                indexes = []
+                found = ""
+    return [x for x in instructions if x is not None]
+
+
+def remove_by_reversed_orders(instructions: List[ContentStreamInstruction], orders: Dict[str, List[int]]) -> \
+        List[ContentStreamInstruction]:
+    """Remove all instructions by reversed orders of operators from PDF."""
+    indexes = {}
+    for i in reversed(range(len(instructions))):
+        instruction = instructions[i]
+        op = instruction.operator.__str__()
+        if indexes.get(op, 0) in orders.get(op, []):
+            instructions[i] = None
+        indexes[op] = indexes.get(op, 0) + 1
+    return [x for x in instructions if x is not None]
+
+
 def remove_watermark_from_geos_pdf(input_file: Path, output_file: Path) -> str:
     """
     Remove watermark from pdf (exported from any GEOS app) and save to output_file.
@@ -199,33 +271,29 @@ def remove_watermark_from_geos_pdf(input_file: Path, output_file: Path) -> str:
     pdf = Pdf.open(input_file)
     for page_number, page in enumerate(pdf.pages):
         page_instructions = parse_content_stream(page)
-
-        # remove VERSION EVALUATION (last f operator)
-        for i in reversed(range(len(page_instructions))):
-            op = page_instructions[i].operator.__str__()
-            if op == 'f':
-                page_instructions[i] = None
-                break
-        page_instructions = [x for x in page_instructions if x is not None]  # remove None
-
-        # remove watermark in footer
-        nb_captured = 0
-        for i in reversed(range(len(page_instructions))):
-            op = page_instructions[i].operator.__str__()
-            if op == 'TJ':
-                instruction = page_instructions[i]
-                if str(instruction.operands[0][-1]) == '-0.152344' and str(instruction.operands[0][0]) == '\x007':
-                    nb_captured += 1
-                    if nb_captured == 1:
-                        page_instructions[i] = None
-                    # break
-
-        if nb_captured > 1:  # logging to sentry
-            message = f"{input_file} at page {page_number + 1} => too much detected. ({nb_captured} > 1)"
+        previous_len = len(page_instructions)
+        # VERSION EVALUATION
+        page_instructions = remove_tjs_min(page_instructions, "VERSION EVALUATION")
+        # alt: VERSION EVALUATION
+        new_len = len(page_instructions)
+        if new_len == previous_len:
+            page_instructions = remove_by_reversed_orders(page_instructions, {
+                'f': [0, ],
+            })
+            message = f"{input_file} at page {page_number + 1} => we used 'f' operator to remove watermark."
             logger.warning(message)
             w_sentry(capture_message, message)
 
-        page_instructions = [x for x in page_instructions if x is not None]  # remove None
+        # Trial - XXX
+        page_instructions = remove_tj_maj(page_instructions, "Trial - ")
+        page_instructions = remove_tj_maj(page_instructions,
+                                          [b'\x007', b'\x00U', b'\x00L', b'\x00D', b'\x00O', b'\x00\x03', b'\x00\x10',
+                                           b'\x00\x03'])
+
+        # UnRegistered
+        page_instructions = remove_tj_maj(page_instructions, "UnRegistered")
+
+        # save page
         new_content_stream = unparse_content_stream(page_instructions)
         page.Contents = pdf.make_stream(new_content_stream)  # override page contents
     pdf.save(output_file)
